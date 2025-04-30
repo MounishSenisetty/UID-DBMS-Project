@@ -1,14 +1,13 @@
-## Team Members
-- Adamya Sharma      - AM.AI.U4AID23024 
-- Harita Aneesh      - AM.AI.U4AID23042       
-- Santhanalakshmi    - AM.AI.U4AID23057 
-- Mounish Senisetty  - AM.AI.U4AID23058 
-
-
 # 🗳️ Election Management System
 
 The Election Management System is a full-stack web application designed to digitally manage elections within a constituency. It supports secure authentication, role-based access (Admin, Officer, Elector), vote casting, and real-time result visualization. The system is built using Node.js, Express.js, PostgreSQL, Sequelize, React.js, Tailwind CSS, and Bootstrap.
 
+## Team Members
+- Adamya Sharma      - AM.AI.U4AID23024 
+- Harita Aneesh      - AM.AI.U4AID23042       
+- Santhanalakshmi    - AM.AI.U4AID23057 
+- Mounish Senisetty  - AM.AI.U4AID23058
+  
 ## 📌 Features
 
 - JWT-based login and signup with role selection
