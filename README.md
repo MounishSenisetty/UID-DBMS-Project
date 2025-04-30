@@ -1,8 +1,8 @@
 ## Team Members
-Adamya Sharma    - AM.AI.U4AID23024 
-Harita Aneesh    - AM.AI.U4AID23042       
-Santhanalakshmi  - AM.AI.U4AID23057 
-Mounish Senisetty- AM.AI.U4AID23058 
+- Adamya Sharma    - AM.AI.U4AID23024 
+- Harita Aneesh    - AM.AI.U4AID23042       
+- Santhanalakshmi  - AM.AI.U4AID23057 
+- Mounish Senisetty- AM.AI.U4AID23058 
 
 
 # 🗳️ Election Management System
