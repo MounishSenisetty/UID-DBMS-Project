@@ -2,8 +2,6 @@
 
 The Election Management System is a full-stack web application designed to digitally manage elections within a constituency. It supports secure authentication, role-based access (Admin, Officer, Elector), vote casting, and real-time result visualization. The system is built using Node.js, Express.js, PostgreSQL, Sequelize, React.js, Tailwind CSS, and Bootstrap.
 
----
-
 ## 📌 Features
 
 - JWT-based login and signup with role selection
@@ -14,8 +12,6 @@ The Election Management System is a full-stack web application designed to digit
 - Real-time result chart visualization using vote data
 - Fully responsive and mobile-friendly interface
 - RESTful APIs with proper authentication and authorization
-
----
 
 ## 🛠️ Tech Stack
 
@@ -33,91 +29,108 @@ The Election Management System is a full-stack web application designed to digit
 - Bcrypt for password hashing
 - CORS, dotenv, and middleware-based route protection
 
----
-
 ## 📁 Project Structure
-election-management-system/ ├── backend/ │ ├── config/ │ ├── controllers/ │ ├── middleware/ │ ├── models/ │ ├── routes/ │ ├── migrations/ │ ├── server.js │ └── .env
-├── frontend/ │ ├── public/ │ ├── src/ │ │ ├── components/ │ │ ├── pages/ │ │ ├── services/ │ │ ├── contexts/ │ │ └── App.jsx │ ├── tailwind.config.js │ └── vite.config.js
 
-
----
+\`\`\`
+election-management-system/
+├── backend/
+│   ├── config/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── models/
+│   ├── routes/
+│   ├── migrations/
+│   ├── server.js
+│   └── .env
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── contexts/
+│   │   └── App.jsx
+│   ├── tailwind.config.js
+│   └── vite.config.js
+\`\`\`
 
 ## ⚙️ Installation & Setup
 
 ### 1. Clone the repository
-```bash
+\`\`\`bash
 git clone https://github.com/your-username/election-management-system.git
 cd election-management-system
+\`\`\`
 
+### 2. Backend Setup
+\`\`\`bash
+cd backend
+npm install
+\`\`\`
+
+Create a \`.env\` file:
+\`\`\`
 PORT=5000
 DB_NAME=your_db_name
 DB_USER=your_db_user
 DB_PASSWORD=your_db_password
 JWT_SECRET=your_secret_key
+\`\`\`
 
+Run database migrations:
+\`\`\`bash
 npx sequelize-cli db:migrate
+\`\`\`
 
-#To start backend server
+Start the backend server:
+\`\`\`bash
 npm start
+\`\`\`
 
-#To start frontend
+### 3. Frontend Setup
+\`\`\`bash
 cd ../frontend
 npm install
 npm run dev
+\`\`\`
 
-🚀 Usage
-Visit http://localhost:5173 to open the frontend.
+## 🚀 Usage
 
-Register as Admin, Officer, or Elector.
+- Visit \`http://localhost:5173\` to open the frontend.
+- Register as Admin, Officer, or Elector.
+- Login and access your role-specific dashboard.
+- Admin can manage entire election setup.
+- Officers verify electors before voting.
+- Electors vote once and view results.
 
-Login and access your role-specific dashboard.
+## 🔐 Roles and Permissions
 
-Admin can manage entire election setup.
+- **Admin**
+  - Add/edit/delete constituencies, polling stations, officers, electors, parties, candidates
+  - View vote counts and results
+- **Officer**
+  - View electors by polling station
+  - Mark electors as verified
+- **Elector**
+  - View candidates
+  - Cast a single vote
+  - View voting status and results
 
-Officers verify electors before voting.
+## 📊 Visual Features
 
-Electors vote once and view results.
+- Voting cards with candidate and party info
+- Elector profile view
+- Bar/pie chart visualizations for results
+- Table views for admin/officer operations
+- Role-based navigation and protected routes
 
-🔐 Roles and Permissions
-Admin
+## 📄 License
 
-Add/edit/delete constituencies, polling stations, officers, electors, parties, candidates
-
-View vote counts and results
-
-Officer
-
-View electors by polling station
-
-Mark electors as verified
-
-Elector
-
-View candidates
-
-Cast a single vote
-
-View voting status and results
-
-📊 Visual Features
-Voting cards with candidate and party info
-
-Elector profile view
-
-Bar/pie chart visualizations for results
-
-Table views for admin/officer operations
-
-Role-based navigation and protected routes
-
-📄 License
 This project is developed for academic purposes only.
 
-👨‍💻 Authors
-Mounish – Admin & Officer Dashboards
+## 👨‍💻 Authors
 
-Teammate 2 – Elector Dashboard & Voting
-
-Teammate 3 – Result Charts & Profile Pages
-
-Teammate 4 – Backend Routes & Authentication
+- Mounish – Admin & Officer Dashboards
+- Teammate 2 – Elector Dashboard & Voting
+- Teammate 3 – Result Charts & Profile Pages
+- Teammate 4 – Backend Routes & Authentication
