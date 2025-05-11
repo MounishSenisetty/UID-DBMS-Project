@@ -8,7 +8,6 @@ The Election Management System is a full-stack web application designed to digit
 - Santhanalakshmi    - AM.AI.U4AID23057 
 - Mounish Senisetty  - AM.AI.U4AID23058
 
-
 A full-stack web application for managing elections, including admin, officer, and elector roles. Features include user authentication, role-based dashboards, live results, and demo accounts for easy testing.
 
 ## Features
@@ -42,10 +41,9 @@ A full-stack web application for managing elections, including admin, officer, a
    ```bash
    git clone https://github.com/yourusername/election-management.git
    cd election-management
-````
+   ```
 
 2. **Install dependencies:**
-
    ```bash
    cd backend
    npm install
@@ -54,20 +52,16 @@ A full-stack web application for managing elections, including admin, officer, a
    ```
 
 3. **Configure the database:**
-
-   * Edit `backend/config/db.js` with your PostgreSQL credentials.
-   * Create the database in PostgreSQL if it does not exist.
-   ```
+   - Edit `backend/config/db.js` with your PostgreSQL credentials.
+   - Create the database in PostgreSQL if it does not exist.
 
 4. **Start the backend server:**
-
    ```bash
    cd backend
    npm start
    ```
 
 5. **Start the frontend development server:**
-
    ```bash
    cd frontend
    npm run dev
@@ -76,20 +70,7 @@ A full-stack web application for managing elections, including admin, officer, a
    ```
 
 6. **Access the app:**
-
-   * Open [http://localhost:5173](http://localhost:5173) in your browser.
-
-## Demo Accounts
-
-On the login page, you can use demo accounts for quick access:
-
-| Role    | ID | Password    |
-| ------- | -- | ----------- |
-| Admin   | 1  | password123 |
-| Officer | 2  | password123 |
-| Elector | 3  | password123 |
-
-* Use the "Demo Login" or "Show Demo Details" buttons for instant access.
+   - Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ## Project Structure
 
@@ -113,21 +94,15 @@ election-management/
 
 ## Customization
 
-* **Add new roles:** Update the roles array in the signup form and backend logic.
-* **Change demo accounts:** Edit the `demoAccounts` object in `frontend/src/pages/public/Login.jsx`.
-* **Styling:** Modify Tailwind config or CSS files for custom themes.
+- **Add new roles:** Update the roles array in the signup form and backend logic.
+- **Change demo accounts:** Edit the `demoAccounts` object in `frontend/src/pages/public/Login.jsx`.
+- **Styling:** Modify Tailwind config or CSS files for custom themes.
 
 ## Accessibility
 
-* Login and signup forms use proper `autoComplete` attributes for accessibility and password manager support.
-* Responsive navigation menus for all screen sizes.
+- Login and signup forms use proper `autoComplete` attributes for accessibility and password manager support.
+- Responsive navigation menus for all screen sizes.
 
 ## License
 
 [MIT](LICENSE)
-
-```
-
-
-
-
