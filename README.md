@@ -7,131 +7,127 @@ The Election Management System is a full-stack web application designed to digit
 - Harita Aneesh      - AM.AI.U4AID23042       
 - Santhanalakshmi    - AM.AI.U4AID23057 
 - Mounish Senisetty  - AM.AI.U4AID23058
-  
-## 📌 Features
 
-- JWT-based login and signup with role selection
-- Role-based dashboards for Admin, Officer, and Elector
-- Admin can manage constituencies, polling stations, officers, electors, parties, and candidates
-- Officer can view and verify electors at assigned polling stations
-- Elector can view candidate list, cast vote (only once), and view live results
-- Real-time result chart visualization using vote data
-- Fully responsive and mobile-friendly interface
-- RESTful APIs with proper authentication and authorization
 
-## 🛠️ Tech Stack
+A full-stack web application for managing elections, including admin, officer, and elector roles. Features include user authentication, role-based dashboards, live results, and demo accounts for easy testing.
 
-**Frontend:**
-- React.js (with Vite)
-- React Router v6
-- Axios (with interceptors for auth)
-- React Toastify (notifications)
-- Tailwind CSS and Bootstrap (for UI design)
+## Features
 
-**Backend:**
-- Node.js with Express.js
-- PostgreSQL with Sequelize ORM
-- JWT for secure token-based authentication
-- Bcrypt for password hashing
-- CORS, dotenv, and middleware-based route protection
+- **Role-based authentication:** Admin, Officer (multiple types), Elector  
+- **Responsive dashboards** for each role  
+- **Live election results** with charts and statistics  
+- **Elector verification and voting**  
+- **Polling station management**  
+- **Demo accounts** for quick access and testing  
+- **Accessible, mobile-friendly UI** (React + Tailwind CSS)  
 
-## 📁 Project Structure
+## Tech Stack
 
-\`\`\`
-election-management-system/
+- **Frontend:** React, React Router, Tailwind CSS  
+- **Backend:** Node.js, Express, Sequelize, PostgreSQL  
+- **Authentication:** Custom context, localStorage  
+- **Charts:** Chart.js  
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v16+ recommended)  
+- npm or yarn  
+- PostgreSQL  
+
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/yourusername/election-management.git
+   cd election-management
+````
+
+2. **Install dependencies:**
+
+   ```bash
+   cd backend
+   npm install
+   cd ../frontend
+   npm install
+   ```
+
+3. **Configure the database:**
+
+   * Edit `backend/config/db.js` with your PostgreSQL credentials.
+   * Create the database in PostgreSQL if it does not exist.
+   ```
+
+4. **Start the backend server:**
+
+   ```bash
+   cd backend
+   npm start
+   ```
+
+5. **Start the frontend development server:**
+
+   ```bash
+   cd frontend
+   npm run dev
+   # or
+   yarn dev
+   ```
+
+6. **Access the app:**
+
+   * Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+## Demo Accounts
+
+On the login page, you can use demo accounts for quick access:
+
+| Role    | ID | Password    |
+| ------- | -- | ----------- |
+| Admin   | 1  | password123 |
+| Officer | 2  | password123 |
+| Elector | 3  | password123 |
+
+* Use the "Demo Login" or "Show Demo Details" buttons for instant access.
+
+## Project Structure
+
+```
+election-management/
 ├── backend/
-│   ├── config/
-│   ├── controllers/
-│   ├── middleware/
 │   ├── models/
 │   ├── routes/
-│   ├── migrations/
-│   ├── server.js
-│   └── .env
+│   ├── config/
+│   └── server.js
 ├── frontend/
-│   ├── public/
 │   ├── src/
 │   │   ├── components/
+│   │   ├── layouts/
 │   │   ├── pages/
-│   │   ├── services/
 │   │   ├── contexts/
-│   │   └── App.jsx
-│   ├── tailwind.config.js
-│   └── vite.config.js
-\`\`\`
+│   │   └── App.css
+│   └── tailwind.config.js
+└── README.md
+```
 
-## ⚙️ Installation & Setup
+## Customization
 
-### 1. Clone the repository
-\`\`\`bash
-git clone https://github.com/your-username/election-management-system.git
-cd election-management-system
-\`\`\`
+* **Add new roles:** Update the roles array in the signup form and backend logic.
+* **Change demo accounts:** Edit the `demoAccounts` object in `frontend/src/pages/public/Login.jsx`.
+* **Styling:** Modify Tailwind config or CSS files for custom themes.
 
-### 2. Backend Setup
-\`\`\`bash
-cd backend
-npm install
-\`\`\`
+## Accessibility
 
-Create a \`.env\` file:
-\`\`\`
-PORT=5000
-DB_NAME=your_db_name
-DB_USER=your_db_user
-DB_PASSWORD=your_db_password
-JWT_SECRET=your_secret_key
-\`\`\`
+* Login and signup forms use proper `autoComplete` attributes for accessibility and password manager support.
+* Responsive navigation menus for all screen sizes.
 
-Run database migrations:
-\`\`\`bash
-npx sequelize-cli db:migrate
-\`\`\`
+## License
 
-Start the backend server:
-\`\`\`bash
-npm start
-\`\`\`
+[MIT](LICENSE)
 
-### 3. Frontend Setup
-\`\`\`bash
-cd ../frontend
-npm install
-npm run dev
-\`\`\`
+```
 
-## 🚀 Usage
 
-- Visit \`http://localhost:5173\` to open the frontend.
-- Register as Admin, Officer, or Elector.
-- Login and access your role-specific dashboard.
-- Admin can manage entire election setup.
-- Officers verify electors before voting.
-- Electors vote once and view results.
-
-## 🔐 Roles and Permissions
-
-- **Admin**
-  - Add/edit/delete constituencies, polling stations, officers, electors, parties, candidates
-  - View vote counts and results
-- **Officer**
-  - View electors by polling station
-  - Mark electors as verified
-- **Elector**
-  - View candidates
-  - Cast a single vote
-  - View voting status and results
-
-## 📊 Visual Features
-
-- Voting cards with candidate and party info
-- Elector profile view
-- Bar/pie chart visualizations for results
-- Table views for admin/officer operations
-- Role-based navigation and protected routes
-
-## 📄 License
-
-This project is developed for academic purposes only.
 
 
