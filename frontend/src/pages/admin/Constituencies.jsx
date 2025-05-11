@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import Card from '../../components/common/Card'
 import Table from '../../components/common/Table'
 import Button from '../../components/common/Button'
@@ -22,11 +22,52 @@ const Constituencies = () => {
   const fetchConstituencies = async () => {
     setLoading(true)
     try {
-      const response = await api.get('/api/constituencies')
-      setConstituencies(response.data)
+      // Simulated API call
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      setConstituencies([
+        { 
+          id: 1, 
+          name: 'Northern District', 
+          code: 'ND-001',
+          registeredVoters: 5234,
+          pollingStations: 8,
+          status: 'active'
+        },
+        { 
+          id: 2, 
+          name: 'Southern District', 
+          code: 'SD-001',
+          registeredVoters: 4876,
+          pollingStations: 7,
+          status: 'active'
+        },
+        { 
+          id: 3, 
+          name: 'Eastern District', 
+          code: 'ED-001',
+          registeredVoters: 3987,
+          pollingStations: 5,
+          status: 'active'
+        },
+        { 
+          id: 4, 
+          name: 'Western District', 
+          code: 'WD-001',
+          registeredVoters: 4532,
+          pollingStations: 6,
+          status: 'active'
+        },
+        { 
+          id: 5, 
+          name: 'Central District', 
+          code: 'CD-001',
+          registeredVoters: 6244,
+          pollingStations: 9,
+          status: 'active'
+        },
+      ])
     } catch (error) {
       console.error('Error fetching constituencies:', error)
-      alert('Error fetching constituencies: ' + error.message)
     } finally {
       setLoading(false)
     }
@@ -34,12 +75,30 @@ const Constituencies = () => {
   
   const columns = [
     { 
-      header: 'ID',
-      accessor: 'id',
-    },
-    { 
       header: 'Name', 
       accessor: 'name',
+    },
+    { 
+      header: 'Code', 
+      accessor: 'code',
+    },
+    { 
+      header: 'Registered Voters', 
+      accessor: 'registeredVoters',
+      render: (row) => row.registeredVoters.toLocaleString(),
+    },
+    { 
+      header: 'Polling Stations', 
+      accessor: 'pollingStations',
+    },
+    { 
+      header: 'Status', 
+      accessor: 'status',
+      render: (row) => (
+        <span className={`badge ${row.status === 'active' ? 'badge-success' : 'badge-error'}`}>
+          {row.status.charAt(0).toUpperCase() + row.status.slice(1)}
+        </span>
+      ),
     },
     {
       header: 'Actions',
@@ -73,11 +132,10 @@ const Constituencies = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this constituency?')) {
       try {
-        await api.delete(`/api/constituencies/${id}`)
+        // API call would go here
         setConstituencies(constituencies.filter(c => c.id !== id))
       } catch (error) {
         console.error('Error deleting constituency:', error)
-        alert('Error deleting constituency: ' + error.message)
       }
     }
   }
@@ -85,14 +143,21 @@ const Constituencies = () => {
   const onSubmit = async (data) => {
     try {
       if (editingConstituency) {
-        await api.put(`/api/constituencies/${editingConstituency.id}`, data)
+        // Update existing constituency
         const updatedConstituencies = constituencies.map(c => 
           c.id === editingConstituency.id ? { ...c, ...data } : c
         )
         setConstituencies(updatedConstituencies)
       } else {
-        const response = await api.post('/api/constituencies', data)
-        setConstituencies([...constituencies, response.data])
+        // Add new constituency
+        const newConstituency = {
+          id: constituencies.length + 1,
+          ...data,
+          registeredVoters: 0,
+          pollingStations: 0,
+          status: 'active'
+        }
+        setConstituencies([...constituencies, newConstituency])
       }
       
       setIsModalOpen(false)
@@ -100,7 +165,6 @@ const Constituencies = () => {
       reset()
     } catch (error) {
       console.error('Error saving constituency:', error)
-      alert('Error saving constituency: ' + error.message)
     }
   }
   
@@ -148,6 +212,12 @@ const Constituencies = () => {
             label="Constituency Name"
             {...register('name', { required: 'Name is required' })}
             error={errors.name?.message}
+          />
+          
+          <Input
+            label="Constituency Code"
+            {...register('code', { required: 'Code is required' })}
+            error={errors.code?.message}
           />
           
           <div className="mt-6 flex justify-end space-x-3">

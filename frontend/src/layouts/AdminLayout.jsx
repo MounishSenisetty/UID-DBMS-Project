@@ -248,13 +248,13 @@ const AdminLayout = () => {
         </div>
         
         <header className="bg-white shadow">
-          <div className="w-full py-6 px-4 sm:px-6 lg:px-8">
+          <div className="w-full px-4 sm:px-6 lg:px-8 py-4">
             <h1 className="text-2xl font-semibold text-neutral-900">{getPageTitle()}</h1>
           </div>
         </header>
         
         <main className="flex-1">
-          <div className="w-full py-6 sm:px-6 lg:px-8">
+          <div className="w-full px-4 sm:px-6 lg:px-8 py-6">
             <Outlet />
           </div>
         </main>

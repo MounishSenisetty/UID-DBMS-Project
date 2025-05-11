@@ -1,9 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 
-const PollingStation = require('./PollingStation');
-const Candidate = require('./Candidate');
-
 const Constituency = sequelize.define('Constituency', {
   id: {
     type: DataTypes.INTEGER,
@@ -15,9 +12,6 @@ const Constituency = sequelize.define('Constituency', {
     allowNull: false,
     unique: true,
   },
-}, {
-  tableName: 'constituencies',
-  timestamps: false,
 });
 
 module.exports = Constituency;

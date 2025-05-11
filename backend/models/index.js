@@ -1,4 +1,4 @@
- const sequelize = require('../config/db');
+const sequelize = require('../config/db');
 
 const User = require('./User');
 const Elector = require('./Elector');
@@ -16,10 +16,6 @@ PollingStation.hasMany(Elector, { foreignKey: 'pollingStationId' });
 
 Elector.hasOne(Vote, { foreignKey: 'electorSerialNumber' });
 Vote.belongsTo(Elector, { foreignKey: 'electorSerialNumber' });
-
-// Add association between Elector and User
-Elector.hasOne(User, { foreignKey: 'linkedId', sourceKey: 'id' });
-User.belongsTo(Elector, { foreignKey: 'linkedId', targetKey: 'id' });
 
 Vote.belongsTo(Candidate, { foreignKey: 'candidateId' });
 Candidate.hasMany(Vote, { foreignKey: 'candidateId' });

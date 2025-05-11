@@ -17,7 +17,6 @@ const checkIfVoted = async (req, res, next) => {
   next();
 };
 
-// Create new vote
 router.post('/', authenticateJWT, authorizeRoles('elector'), checkIfVoted, async (req, res) => {
   try {
     const { electorSerialNumber, candidateId } = req.body;
@@ -28,7 +27,6 @@ router.post('/', authenticateJWT, authorizeRoles('elector'), checkIfVoted, async
   }
 });
 
-// Get vote counts and winner
 router.get('/count', authenticateJWT, authorizeRoles('admin', 'returning_officer', 'presiding_officer'), async (req, res) => {
   try {
     const voteCounts = await Vote.findAll({
@@ -43,64 +41,6 @@ router.get('/count', authenticateJWT, authorizeRoles('admin', 'returning_officer
       parseInt(curr.dataValues.voteCount) > parseInt(prev.dataValues.voteCount) ? curr : prev
     );
     res.json({ voteCounts, winner });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Get all votes
-router.get('/', authenticateJWT, authorizeRoles('admin', 'returning_officer', 'registration_officer', 'polling_officer', 'presiding_officer'), async (req, res) => {
-  try {
-    const votes = await Vote.findAll({
-      include: [{ model: Candidate, include: [Party] }, Elector]
-    });
-    res.json(votes);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Get vote by id
-router.get('/:id', authenticateJWT, authorizeRoles('admin', 'returning_officer', 'registration_officer', 'polling_officer', 'presiding_officer'), async (req, res) => {
-  try {
-    const vote = await Vote.findByPk(req.params.id, {
-      include: [{ model: Candidate, include: [Party] }, Elector]
-    });
-    if (!vote) {
-      return res.status(404).json({ message: 'Vote not found' });
-    }
-    res.json(vote);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Update vote
-router.put('/:id', authenticateJWT, authorizeRoles('admin'), async (req, res) => {
-  try {
-    const { electorSerialNumber, candidateId } = req.body;
-    const vote = await Vote.findByPk(req.params.id);
-    if (!vote) {
-      return res.status(404).json({ message: 'Vote not found' });
-    }
-    vote.electorSerialNumber = electorSerialNumber;
-    vote.candidateId = candidateId;
-    await vote.save();
-    res.json(vote);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Delete vote
-router.delete('/:id', authenticateJWT, authorizeRoles('admin'), async (req, res) => {
-  try {
-    const vote = await Vote.findByPk(req.params.id);
-    if (!vote) {
-      return res.status(404).json({ message: 'Vote not found' });
-    }
-    await vote.destroy();
-    res.json({ message: 'Vote deleted' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

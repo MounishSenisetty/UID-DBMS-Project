@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Suspense, useEffect, lazy } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Loader from './Loader';
@@ -11,10 +11,11 @@ import ElectorLayout from '../../layouts/ElectorLayout';
 
 import "../../App.css";
 
-import Login from '../../pages/public/Login';
-import Signup from '../../pages/public/Signup';
-import LiveResults from '../../pages/public/LiveResults';
-import NotFound from '../../pages/public/NotFound';
+// Lazy loaded pages
+const Login = lazy(() => import('../../pages/public/Login'));
+const Signup = lazy(() => import('../../pages/public/Signup'));
+const LiveResults = lazy(() => import('../../pages/public/LiveResults'));
+const NotFound = lazy(() => import('../../pages/public/NotFound'));
 
 const AdminDashboard = lazy(() => import('../../pages/admin/Dashboard'));
 const AdminConstituencies = lazy(() => import('../../pages/admin/Constituencies'));
@@ -32,7 +33,7 @@ const OfficerStationDetails = lazy(() => import('../../pages/officer/StationDeta
 const ElectorDashboard = lazy(() => import('../../pages/elector/Dashboard'));
 const ElectorProfile = lazy(() => import('../../pages/elector/Profile'));
 const ElectorVoting = lazy(() => import('../../pages/elector/Voting'));
-const ElectorResults = lazy(() => import('../../pages/elector/Results'));
+const ElectorResults = lazy(() => import('../../pages/public/LiveResults'));
 
 function App() {
   const { currentUser, setCurrentUser, loading } = useAuth();
@@ -64,10 +65,7 @@ function App() {
       return <Navigate to="/login" replace />;
     }
 
-    if (allowedRoles && !allowedRoles.includes(currentUser.role)) {
-      return <Navigate to="/login" replace />;
-    }
-
+    // TODO: Role checking logic if needed later
     return children;
   };
 
@@ -82,31 +80,15 @@ function App() {
 
         {/* Public routes */}
         <Route path="/" element={<PublicLayout />}>
-          <Route index element={<Navigate to="/signup" replace />} />
+          <Route index element={<Navigate to="/user/signup" replace />} />
           <Route path="login" element={<Login />} />
-          {/* Removed /signup route */}
-          {/* <Route path="signup" element={<Signup />} /> */}
           <Route path="signup" element={<Signup />} />
+          <Route path="user/signup" element={<Signup />} />
           <Route path="results" element={<LiveResults />} />
         </Route>
 
         {/* Admin routes */}
-        <Route path="/admin" element={
-          <ProtectedRoute allowedRoles={['admin']}>
-            <AdminLayout />
-          </ProtectedRoute>
-        }>
-          <Route index element={<AdminDashboard />} />
-          <Route path="constituencies" element={<AdminConstituencies />} />
-          <Route path="polling-stations" element={<AdminPollingStations />} />
-          <Route path="officers" element={<AdminOfficers />} />
-          <Route path="parties" element={<AdminParties />} />
-          <Route path="candidates" element={<AdminCandidates />} />
-          <Route path="results" element={<AdminResults />} />
-        </Route>
-
-        {/* Demo Admin route without authorization */}
-        <Route path="/demo/admin" element={<AdminLayout />}>
+        <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="constituencies" element={<AdminConstituencies />} />
           <Route path="polling-stations" element={<AdminPollingStations />} />
@@ -118,18 +100,10 @@ function App() {
 
         {/* Officer routes */}
         <Route path="/officer" element={
-          <ProtectedRoute allowedRoles={['officer', 'returning_officer', 'registration_officer', 'polling_officer', 'presiding_officer']}>
+          <ProtectedRoute>
             <OfficerLayout />
           </ProtectedRoute>
         }>
-          {/* Future Officer Pages */}
-          <Route index element={<OfficerDashboard />} />
-          <Route path="verification" element={<OfficerElectorVerification />} />
-          <Route path="station" element={<OfficerStationDetails />} />
-        </Route>
-
-        {/* Demo Officer route without authorization */}
-        <Route path="/demo/officer" element={<OfficerLayout />}>
           <Route index element={<OfficerDashboard />} />
           <Route path="verification" element={<OfficerElectorVerification />} />
           <Route path="station" element={<OfficerStationDetails />} />
@@ -137,19 +111,10 @@ function App() {
 
         {/* Elector routes */}
         <Route path="/elector" element={
-          <ProtectedRoute allowedRoles={['elector']}>
+          <ProtectedRoute>
             <ElectorLayout />
           </ProtectedRoute>
         }>
-          {/* Future Elector Pages */}
-          <Route index element={<ElectorDashboard />} />
-          <Route path="profile" element={<ElectorProfile />} />
-          <Route path="vote" element={<ElectorVoting />} />
-          <Route path="results" element={<ElectorResults />} />
-        </Route>
-
-        {/* Demo Elector route without authorization */}
-        <Route path="/demo/elector" element={<ElectorLayout />}>
           <Route index element={<ElectorDashboard />} />
           <Route path="profile" element={<ElectorProfile />} />
           <Route path="vote" element={<ElectorVoting />} />

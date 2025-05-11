@@ -24,7 +24,7 @@ router.post('/signup', async (req, res) => {
 
     console.log("User registered successfully", user);
 
-    res.status(201).json({ token, userID: user.linkedId, role: user.role });
+    res.status(201).json({ token, userID: user.linkedId });
 
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -82,23 +82,6 @@ router.get('/verify', async (req, res) => {
     res.json({ user: { id: user.id, username: user.username, role: user.role, linkedId: user.linkedId } });
   } catch (error) {
     res.status(401).json({ message: 'Invalid or expired token' });
-  }
-});
-
-// Existing code above...
-
-// New endpoint to get officers
-router.get('/users/officers', async (req, res) => {
-  try {
-    const officerRoles = ['returning_officer', 'registration_officer', 'polling_officer', 'presiding_officer'];
-    const officers = await User.findAll({
-      where: {
-        role: officerRoles
-      }
-    });
-    res.json(officers);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
   }
 });
 

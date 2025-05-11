@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import Card from '../../components/common/Card'
 import Table from '../../components/common/Table'
 import Button from '../../components/common/Button'
@@ -9,7 +9,6 @@ import api from '../../services/api'
 
 const PollingStations = () => {
   const [stations, setStations] = useState([])
-  const [constituencies, setConstituencies] = useState([])
   const [loading, setLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingStation, setEditingStation] = useState(null)
@@ -18,27 +17,69 @@ const PollingStations = () => {
   
   useEffect(() => {
     fetchStations()
-    fetchConstituencies()
   }, [])
   
-    const fetchStations = async () => {
-      setLoading(true)
-      try {
-        const response = await api.get('/api/polling-stations')
-        setStations(response.data)
-      } catch (error) {
-        console.error('Error fetching polling stations:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-  const fetchConstituencies = async () => {
+  const fetchStations = async () => {
+    setLoading(true)
     try {
-      const response = await api.get('/api/constituencies')
-      setConstituencies(response.data)
+      // Simulated API call
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      setStations([
+        {
+          id: 1,
+          name: 'Central Community Center',
+          code: 'CCC-001',
+          constituency: 'Central District',
+          address: '123 Main St, Central City',
+          capacity: 1200,
+          assignedOfficers: 4,
+          status: 'active'
+        },
+        {
+          id: 2,
+          name: 'Northern Public School',
+          code: 'NPS-001',
+          constituency: 'Northern District',
+          address: '456 North Ave, Northern City',
+          capacity: 800,
+          assignedOfficers: 3,
+          status: 'active'
+        },
+        {
+          id: 3,
+          name: 'Southern Town Hall',
+          code: 'STH-001',
+          constituency: 'Southern District',
+          address: '789 South St, Southern City',
+          capacity: 1500,
+          assignedOfficers: 5,
+          status: 'active'
+        },
+        {
+          id: 4,
+          name: 'Eastern Community Hall',
+          code: 'ECH-001',
+          constituency: 'Eastern District',
+          address: '321 East Rd, Eastern City',
+          capacity: 1000,
+          assignedOfficers: 4,
+          status: 'active'
+        },
+        {
+          id: 5,
+          name: 'Western Civic Center',
+          code: 'WCC-001',
+          constituency: 'Western District',
+          address: '654 West Blvd, Western City',
+          capacity: 900,
+          assignedOfficers: 3,
+          status: 'active'
+        },
+      ])
     } catch (error) {
-      console.error('Error fetching constituencies:', error)
+      console.error('Error fetching polling stations:', error)
+    } finally {
+      setLoading(false)
     }
   }
   
@@ -48,17 +89,30 @@ const PollingStations = () => {
       accessor: 'name',
     },
     {
-      header: 'Area',
-      accessor: 'area',
-    },
-    {
-      header: 'Ward',
-      accessor: 'ward',
+      header: 'Code',
+      accessor: 'code',
     },
     {
       header: 'Constituency',
-      accessor: 'Constituency.name',
-      render: (row) => row.Constituency?.name || '',
+      accessor: 'constituency',
+    },
+    {
+      header: 'Capacity',
+      accessor: 'capacity',
+      render: (row) => row.capacity.toLocaleString(),
+    },
+    {
+      header: 'Officers',
+      accessor: 'assignedOfficers',
+    },
+    {
+      header: 'Status',
+      accessor: 'status',
+      render: (row) => (
+        <span className={`badge ${row.status === 'active' ? 'badge-success' : 'badge-error'}`}>
+          {row.status.charAt(0).toUpperCase() + row.status.slice(1)}
+        </span>
+      ),
     },
     {
       header: 'Actions',
@@ -92,7 +146,7 @@ const PollingStations = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this polling station?')) {
       try {
-        await api.delete(`/api/polling-stations/${id}`)
+        // API call would go here
         setStations(stations.filter(s => s.id !== id))
       } catch (error) {
         console.error('Error deleting polling station:', error)
@@ -102,16 +156,22 @@ const PollingStations = () => {
   
   const onSubmit = async (data) => {
     try {
-        if (editingStation) {
-          await api.put(`/api/polling-stations/${editingStation.id}`, data)
-          const updatedStations = stations.map(s => 
-            s.id === editingStation.id ? { ...s, ...data } : s
-          )
-          setStations(updatedStations)
-        } else {
-          const response = await api.post('/api/polling-stations', data)
-          setStations([...stations, response.data])
+      if (editingStation) {
+        // Update existing station
+        const updatedStations = stations.map(s => 
+          s.id === editingStation.id ? { ...s, ...data } : s
+        )
+        setStations(updatedStations)
+      } else {
+        // Add new station
+        const newStation = {
+          id: stations.length + 1,
+          ...data,
+          assignedOfficers: 0,
+          status: 'active'
         }
+        setStations([...stations, newStation])
+      }
       
       setIsModalOpen(false)
       setEditingStation(null)
@@ -162,37 +222,38 @@ const PollingStations = () => {
       >
         <form onSubmit={handleSubmit(onSubmit)}>
           <Input
-            label="Name"
+            label="Station Name"
             {...register('name', { required: 'Name is required' })}
             error={errors.name?.message}
           />
           
           <Input
-            label="Area"
-            {...register('area', { required: 'Area is required' })}
-            error={errors.area?.message}
+            label="Station Code"
+            {...register('code', { required: 'Code is required' })}
+            error={errors.code?.message}
           />
           
           <Input
-            label="Ward"
-            {...register('ward', { required: 'Ward is required' })}
-            error={errors.ward?.message}
+            label="Constituency"
+            {...register('constituency', { required: 'Constituency is required' })}
+            error={errors.constituency?.message}
           />
           
-          <label className="block mb-2 font-medium text-gray-700">Constituency</label>
-          <select
-            {...register('constituencyId', { required: 'Constituency is required' })}
-            className="w-full p-2 border border-gray-300 rounded"
-            defaultValue=""
-          >
-            <option value="" disabled>Select a constituency</option>
-            {constituencies.map((constituency) => (
-              <option key={constituency.id} value={constituency.id}>
-                {constituency.name}
-              </option>
-            ))}
-          </select>
-          {errors.constituencyId && <p className="text-red-600 text-sm mt-1">{errors.constituencyId.message}</p>}
+          <Input
+            label="Address"
+            {...register('address', { required: 'Address is required' })}
+            error={errors.address?.message}
+          />
+          
+          <Input
+            label="Capacity"
+            type="number"
+            {...register('capacity', { 
+              required: 'Capacity is required',
+              min: { value: 100, message: 'Capacity must be at least 100' }
+            })}
+            error={errors.capacity?.message}
+          />
           
           <div className="mt-6 flex justify-end space-x-3">
             <Button

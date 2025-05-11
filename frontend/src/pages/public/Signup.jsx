@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useAuth } from '../../contexts/AuthContext';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import api from '../../services/api'; // Adjust the path based on your project structure
 
 const Signup = () => {
-  const { setCurrentUser } = useAuth();
+  // const { login } = useAuth();
   const [loading, setLoading] = useState(false);
   const { register, handleSubmit, formState: { errors } } = useForm();
 
@@ -19,41 +18,30 @@ const Signup = () => {
     'elector',
   ];
 
-  const onSubmit = async (data, event) => {
-    event.preventDefault(); // Prevent default form submission behavior
+const onSubmit = async (data) => {
     setLoading(true);
     const payload = {
       username: data.username,
       password: data.password, // Changed from passwordHash to password to match backend
       role: data.role,
       linkedId: data.linkedId ? parseInt(data.linkedId) : null,
-      email: data.email
+      email:data.email
     };
 
     try {
       const response = await api.post('/user/signup', payload);
       console.log('User created:', response.data);
-      const user = {
-        userID: response.data.userID,
-        role: response.data.role,
-        username: data.username,
-        email: data.email,
-      };
-      setCurrentUser(user);
-      localStorage.setItem('user', JSON.stringify(user));
-      alert('User created successfully!');
-
-      // Check role and redirect accordingly
-      const role = response.data.role ? response.data.role.toLowerCase() : null;
-      let redirectPath = '/login'; // default fallback
-      if (role === 'elector') {
-        redirectPath = '/elector/dashboard';
-      } else if (role === 'admin') {
-        redirectPath = '/admin/dashboard';
+      localStorage.setItem("userId",response.data.userID);
+      const role = response.data.user?.role || data.role;
+      if (role === 'admin') {
+        window.location.href = '/admin';
+      } else if (role === 'elector') {
+        window.location.href = '/elector';
       } else if (role) {
-        redirectPath = '/officer/verification';
+        window.location.href = '/officer';
+      } else {
+        alert('User created successfully! Please log in.');
       }
-      window.location.href = redirectPath;
     } catch (err) {
       console.error(err);
       alert('Error creating user.');
@@ -63,8 +51,8 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-13rem)] flex flex-col justify-center items-center w-full">
-      <div className="w-full max-w-md">
+    <div className="min-h-[calc(100vh-13rem)] flex flex-col justify-center">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <svg
           className="mx-auto h-16 w-16 text-primary-500"
           viewBox="0 0 24 24"
@@ -92,7 +80,7 @@ const Signup = () => {
         </p>
       </div>
 
-      <div className="mt-8 w-full max-w-md">
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow-card sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <Input

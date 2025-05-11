@@ -1,8 +1,5 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
-const Party = require('./Party');
-
-const Vote = require('./Vote');
 
 const Candidate = sequelize.define('Candidate', {
   id: {
@@ -16,23 +13,18 @@ const Candidate = sequelize.define('Candidate', {
   },
   partyId: {
     type: DataTypes.INTEGER,
-    field: 'partyid',
     references: {
-      model: 'parties',
+      model: 'Parties',  // Use table name as string
       key: 'id',
     },
   },
   constituencyId: {
     type: DataTypes.INTEGER,
-    field: 'constituencyid',
     references: {
-      model: 'constituencies',
+      model: 'Constituencies',  // Use table name as string
       key: 'id',
     },
   },
-}, {
-  tableName: 'candidates',
-  timestamps: false,
 });
 
 module.exports = Candidate;

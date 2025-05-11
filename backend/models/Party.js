@@ -12,13 +12,6 @@ const Party = sequelize.define('Party', {
     allowNull: false,
     unique: true,
   },
-  symbol: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-}, {
-  tableName: 'parties',
-  timestamps: false,
 });
 
 module.exports = Party;

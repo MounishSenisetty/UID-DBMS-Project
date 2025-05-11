@@ -223,7 +223,7 @@ const OfficerLayout = () => {
         </div>
         
         <header className="bg-white shadow">
-          <div className="w-full py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+          <div className="w-full px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
             <h1 className="text-2xl font-semibold text-neutral-900">{getPageTitle()}</h1>
             <div className="text-sm text-neutral-500">
               <span className="bg-success-100 text-success-800 px-2 py-1 rounded-full inline-flex items-center">
@@ -235,7 +235,7 @@ const OfficerLayout = () => {
         </header>
         
         <main className="flex-1">
-          <div className="w-full py-6 sm:px-6 lg:px-8">
+          <div className="w-full px-4 sm:px-6 lg:px-8 py-6">
             <Outlet />
           </div>
         </main>

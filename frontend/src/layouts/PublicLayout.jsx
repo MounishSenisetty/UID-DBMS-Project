@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 
 const PublicLayout = () => {
   const location = useLocation()
+  const [menuOpen, setMenuOpen] = useState(false)
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -26,7 +27,7 @@ const PublicLayout = () => {
                       strokeLinejoin="round"
                     />
                     <path 
-                      d="M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.07989 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z" 
+                      d="M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.07989 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z" 
                       stroke="currentColor" 
                       strokeWidth="2"
                     />
@@ -63,7 +64,8 @@ const PublicLayout = () => {
               <button 
                 type="button" 
                 className="inline-flex items-center justify-center p-2 rounded-md text-neutral-400 hover:text-neutral-500 hover:bg-neutral-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
-                aria-expanded="false"
+                aria-expanded={menuOpen}
+                onClick={() => setMenuOpen(!menuOpen)}
               >
                 <span className="sr-only">Open main menu</span>
                 <svg 
@@ -79,10 +81,37 @@ const PublicLayout = () => {
               </button>
             </div>
           </div>
+          {/* Mobile menu, show/hide based on menuOpen state */}
+          {menuOpen && (
+            <div className="sm:hidden mt-2">
+              <Link 
+                to="/results" 
+                className={`block px-4 py-2 text-base font-medium ${
+                  location.pathname === '/results' 
+                    ? 'text-primary-600 font-semibold' 
+                    : 'text-neutral-700 hover:text-primary-600'
+                }`}
+                onClick={() => setMenuOpen(false)}
+              >
+                Live Results
+              </Link>
+              <Link 
+                to="/login" 
+                className={`block px-4 py-2 text-base font-medium ${
+                  location.pathname === '/login'
+                    ? 'text-primary-600 font-semibold'
+                    : 'text-neutral-700 hover:text-primary-600'
+                }`}
+                onClick={() => setMenuOpen(false)}
+              >
+                Login
+              </Link>
+            </div>
+          )}
         </nav>
       </header>
 
-      <main className="flex-grow">
+      <main className="flex-grow w-full px-4 sm:px-6 lg:px-8 py-8">
         <Outlet />
       </main>
 

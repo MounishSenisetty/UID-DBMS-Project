@@ -12,7 +12,7 @@ const Modal = ({
   closeOnOverlayClick = true,
 }) => {
   const modalRef = useRef(null)
-
+  
   const sizeClasses = {
     sm: 'max-w-md',
     md: 'max-w-lg',
@@ -20,70 +20,39 @@ const Modal = ({
     xl: 'max-w-4xl',
     full: 'max-w-full mx-4'
   }
-
+  
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape') {
         onClose()
       }
     }
-
+    
     if (isOpen) {
       document.addEventListener('keydown', handleEscape)
       document.body.style.overflow = 'hidden'
     }
-
+    
     return () => {
       document.removeEventListener('keydown', handleEscape)
       document.body.style.overflow = 'visible'
     }
   }, [isOpen, onClose])
-
+  
   useEffect(() => {
     if (isOpen && modalRef.current) {
       modalRef.current.focus()
     }
   }, [isOpen])
-
-  // Focus trap inside modal
-  useEffect(() => {
-    const handleTabKey = (e) => {
-      if (!isOpen) return
-      const focusableElements = modalRef.current.querySelectorAll(
-        'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex="0"], [contenteditable]'
-      )
-      const firstElement = focusableElements[0]
-      const lastElement = focusableElements[focusableElements.length - 1]
-
-      if (e.key === 'Tab') {
-        if (e.shiftKey) {
-          if (document.activeElement === firstElement) {
-            e.preventDefault()
-            lastElement.focus()
-          }
-        } else {
-          if (document.activeElement === lastElement) {
-            e.preventDefault()
-            firstElement.focus()
-          }
-        }
-      }
-    }
-
-    document.addEventListener('keydown', handleTabKey)
-    return () => {
-      document.removeEventListener('keydown', handleTabKey)
-    }
-  }, [isOpen])
-
+  
   if (!isOpen) return null
-
+  
   const handleOverlayClick = (e) => {
     if (closeOnOverlayClick && e.target === e.currentTarget) {
       onClose()
     }
   }
-
+  
   return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4 animate-fade-in"
@@ -112,11 +81,11 @@ const Modal = ({
             </svg>
           </button>
         </div>
-
+        
         <div className="p-4 max-h-[calc(100vh-200px)] overflow-y-auto">
           {children}
         </div>
-
+        
         {footer && (
           <div className="border-t border-neutral-200 p-4 bg-neutral-50 rounded-b-lg">
             {footer}

@@ -5,7 +5,7 @@ import Button from '../../components/common/Button'
 import Modal from '../../components/common/Modal'
 import Input from '../../components/common/Input'
 import { useForm } from 'react-hook-form'
-import api from '../../services/api'
+//import api from '../../services/api'
 
 const Parties = () => {
   const [parties, setParties] = useState([])
@@ -22,8 +22,50 @@ const Parties = () => {
   const fetchParties = async () => {
     setLoading(true)
     try {
-      const response = await api.get('/api/parties')
-      setParties(response.data)
+      // Simulated API call
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      setParties([
+        {
+          id: 1,
+          name: 'Progressive Party',
+          code: 'PP',
+          leader: 'John Smith',
+          founded: '1985',
+          candidates: 12,
+          color: '#3366CC',
+          status: 'active'
+        },
+        {
+          id: 2,
+          name: 'Conservative Alliance',
+          code: 'CA',
+          leader: 'Emma Johnson',
+          founded: '1992',
+          candidates: 15,
+          color: '#DC3912',
+          status: 'active'
+        },
+        {
+          id: 3,
+          name: 'Liberty Union',
+          code: 'LU',
+          leader: 'Michael Brown',
+          founded: '1998',
+          candidates: 10,
+          color: '#FF9900',
+          status: 'active'
+        },
+        {
+          id: 4,
+          name: 'Green Future',
+          code: 'GF',
+          leader: 'Sarah Wilson',
+          founded: '2005',
+          candidates: 8,
+          color: '#109618',
+          status: 'active'
+        },
+      ])
     } catch (error) {
       console.error('Error fetching parties:', error)
     } finally {
@@ -35,10 +77,40 @@ const Parties = () => {
     {
       header: 'Name',
       accessor: 'name',
+      render: (row) => (
+        <div className="flex items-center">
+          <div 
+            className="w-4 h-4 rounded-full mr-2"
+            style={{ backgroundColor: row.color }}
+          ></div>
+          {row.name}
+        </div>
+      ),
     },
     {
-      header: 'Symbol',
-      accessor: 'symbol',
+      header: 'Code',
+      accessor: 'code',
+    },
+    {
+      header: 'Leader',
+      accessor: 'leader',
+    },
+    {
+      header: 'Founded',
+      accessor: 'founded',
+    },
+    {
+      header: 'Candidates',
+      accessor: 'candidates',
+    },
+    {
+      header: 'Status',
+      accessor: 'status',
+      render: (row) => (
+        <span className={`badge ${row.status === 'active' ? 'badge-success' : 'badge-error'}`}>
+          {row.status.charAt(0).toUpperCase() + row.status.slice(1)}
+        </span>
+      ),
     },
     {
       header: 'Actions',
@@ -72,7 +144,7 @@ const Parties = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this party?')) {
       try {
-        await api.delete(`/api/parties/${id}`)
+        // API call would go here
         setParties(parties.filter(p => p.id !== id))
       } catch (error) {
         console.error('Error deleting party:', error)
@@ -83,14 +155,20 @@ const Parties = () => {
   const onSubmit = async (data) => {
     try {
       if (editingParty) {
-        await api.put(`/api/parties/${editingParty.id}`, data)
+        // Update existing party
         const updatedParties = parties.map(p => 
           p.id === editingParty.id ? { ...p, ...data } : p
         )
         setParties(updatedParties)
       } else {
-        const response = await api.post('/api/parties', data)
-        setParties([...parties, response.data])
+        // Add new party
+        const newParty = {
+          id: parties.length + 1,
+          ...data,
+          candidates: 0,
+          status: 'active'
+        }
+        setParties([...parties, newParty])
       }
       
       setIsModalOpen(false)
@@ -146,12 +224,32 @@ const Parties = () => {
             {...register('name', { required: 'Name is required' })}
             error={errors.name?.message}
           />
+          
           <Input
-            label="Symbol"
-            {...register('symbol')}
-            error={errors.symbol?.message}
-            name="symbol"
+            label="Party Code"
+            {...register('code', { required: 'Code is required' })}
+            error={errors.code?.message}
           />
+          
+          <Input
+            label="Party Leader"
+            {...register('leader', { required: 'Leader is required' })}
+            error={errors.leader?.message}
+          />
+          
+          <Input
+            label="Founded Year"
+            {...register('founded', { required: 'Founded year is required' })}
+            error={errors.founded?.message}
+          />
+          
+          <Input
+            label="Party Color"
+            type="color"
+            {...register('color', { required: 'Color is required' })}
+            error={errors.color?.message}
+          />
+          
           <div className="mt-6 flex justify-end space-x-3">
             <Button
               variant="outline"

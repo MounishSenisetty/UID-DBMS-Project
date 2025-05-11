@@ -1,55 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import Button from '../../components/common/Button';
-import { getAssignedPollingStations } from '../../services/api';
+import React from 'react';
 
 const OfficerDashboard = () => {
-  const [assignments, setAssignments] = useState([]);
-  const [votingStatus, setVotingStatus] = useState({ totalElectors: 0, votesCast: 0 });
-
-  useEffect(() => {
-    const fetchAssignments = async () => {
-      try {
-        const stations = await getAssignedPollingStations();
-        setAssignments(stations);
-        // TODO: Fetch voting status from backend if available
-        // For now, set dummy voting status based on fetched stations
-        let totalElectors = 0;
-        stations.forEach(station => {
-          if (station.electorsCount) {
-            totalElectors += station.electorsCount;
-          }
-        });
-        setVotingStatus({ totalElectors, votesCast: 0 }); // votesCast to be fetched from backend if possible
-      } catch (error) {
-        console.error('Failed to fetch assignments:', error);
-      }
-    };
-    fetchAssignments();
-  }, []);
+  // Sample data
+  const assignedStation = 'Central Community Center';
+  const pendingVerifications = 12;
+  const todaysVoters = 87;
 
   return (
     <div>
       <h2 className="text-2xl font-semibold mb-4">Officer Dashboard</h2>
-      <div className="mb-6">
-        <h3 className="text-xl font-semibold mb-2">Your Assignments</h3>
-        <ul className="list-disc list-inside">
-          {assignments.map((assignment) => (
-            <li key={assignment.id}>{assignment.name}</li>
-          ))}
-        </ul>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div className="bg-white rounded-lg shadow-card p-6">
+          <div className="text-sm text-neutral-500 mb-1">Assigned Station</div>
+          <div className="text-xl font-bold text-primary-700">{assignedStation}</div>
+        </div>
+        <div className="bg-white rounded-lg shadow-card p-6">
+          <div className="text-sm text-neutral-500 mb-1">Pending Verifications</div>
+          <div className="text-xl font-bold text-warning-600">{pendingVerifications}</div>
+        </div>
+        <div className="bg-white rounded-lg shadow-card p-6">
+          <div className="text-sm text-neutral-500 mb-1">Today's Voters</div>
+          <div className="text-xl font-bold text-success-600">{todaysVoters}</div>
+        </div>
       </div>
-      <div className="mb-6">
-        <h3 className="text-xl font-semibold mb-2">Voting Status</h3>
-        <p>Total Electors: {votingStatus.totalElectors}</p>
-        <p>Votes Cast: {votingStatus.votesCast}</p>
-        <p>Turnout: {votingStatus.totalElectors > 0 ? ((votingStatus.votesCast / votingStatus.totalElectors) * 100).toFixed(2) : '0.00'}%</p>
-      </div>
-      <div>
-        <Link to="/officer/verification">
-          <Button variant="primary">Go to Elector Verification</Button>
-        </Link>
-      </div>
+      <p>Welcome to the Officer Dashboard. Here you can view your assignments and monitor the voting process.</p>
+      {/* Additional dashboard content and stats can be added here */}
     </div>
   );
 };

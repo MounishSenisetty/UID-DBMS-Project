@@ -12,7 +12,6 @@ import {
 import api from '../../services/api'
 import Loader from '../../components/common/Loader'
 import Card from '../../components/common/Card'
-import SkeletonLoader from '../../components/common/SkeletonLoader'
 
 // Register ChartJS components
 ChartJS.register(
@@ -74,7 +73,137 @@ const LiveResults = () => {
             color: '#DC3912',
             isLeading: false,
           },
-          // More mock results...
+          { 
+            candidateId: 3, 
+            candidateName: 'Michael Brown', 
+            partyName: 'Liberty Union', 
+            constituencyId: 1,
+            constituencyName: 'Northern District',
+            votes: 897,
+            color: '#FF9900',
+            isLeading: false,
+          },
+          { 
+            candidateId: 4, 
+            candidateName: 'Sarah Wilson', 
+            partyName: 'Green Future', 
+            constituencyId: 1,
+            constituencyName: 'Northern District',
+            votes: 736,
+            color: '#109618',
+            isLeading: false,
+          },
+          { 
+            candidateId: 5, 
+            candidateName: 'David Lee', 
+            partyName: 'Progressive Party', 
+            constituencyId: 2,
+            constituencyName: 'Southern District',
+            votes: 1523,
+            color: '#3366CC',
+            isLeading: true,
+          },
+          { 
+            candidateId: 6, 
+            candidateName: 'Lisa Chen', 
+            partyName: 'Conservative Alliance', 
+            constituencyId: 2,
+            constituencyName: 'Southern District',
+            votes: 1211,
+            color: '#DC3912',
+            isLeading: false,
+          },
+          { 
+            candidateId: 7, 
+            candidateName: 'Robert Garcia', 
+            partyName: 'Liberty Union', 
+            constituencyId: 2,
+            constituencyName: 'Southern District',
+            votes: 943,
+            color: '#FF9900',
+            isLeading: false,
+          },
+          { 
+            candidateId: 8, 
+            candidateName: 'Jennifer Kim', 
+            partyName: 'Green Future', 
+            constituencyId: 2,
+            constituencyName: 'Southern District',
+            votes: 812,
+            color: '#109618',
+            isLeading: false,
+          },
+          // More results for other constituencies
+          { 
+            candidateId: 9, 
+            candidateName: 'Thomas Parker', 
+            partyName: 'Progressive Party', 
+            constituencyId: 3,
+            constituencyName: 'Eastern District',
+            votes: 1342,
+            color: '#3366CC',
+            isLeading: true,
+          },
+          { 
+            candidateId: 10, 
+            candidateName: 'Maria Rodriguez', 
+            partyName: 'Conservative Alliance', 
+            constituencyId: 3,
+            constituencyName: 'Eastern District',
+            votes: 1257,
+            color: '#DC3912',
+            isLeading: false,
+          },
+          { 
+            candidateId: 11, 
+            candidateName: 'James Wilson', 
+            partyName: 'Progressive Party', 
+            constituencyId: 4,
+            constituencyName: 'Western District',
+            votes: 1654,
+            color: '#3366CC',
+            isLeading: true,
+          },
+          { 
+            candidateId: 12, 
+            candidateName: 'Elizabeth Taylor', 
+            partyName: 'Liberty Union', 
+            constituencyId: 4,
+            constituencyName: 'Western District',
+            votes: 1431,
+            color: '#FF9900',
+            isLeading: false,
+          },
+          { 
+            candidateId: 13, 
+            candidateName: 'Charles Martin', 
+            partyName: 'Conservative Alliance', 
+            constituencyId: 5,
+            constituencyName: 'Central District',
+            votes: 1876,
+            color: '#DC3912',
+            isLeading: true,
+          },
+          { 
+            candidateId: 14, 
+            candidateName: 'Patricia Adams', 
+            partyName: 'Progressive Party', 
+            constituencyId: 5,
+            constituencyName: 'Central District',
+            votes: 1754,
+            color: '#3366CC',
+            isLeading: false,
+          },
+          { 
+            candidateId: 15, 
+            candidateName: 'Daniel Wright', 
+            partyName: 'Green Future', 
+            constituencyId: 5,
+            constituencyName: 'Central District',
+            votes: 1132,
+            color: '#109618',
+            isLeading: false,
+          },
         ]
         
         setResults(mockResults)
@@ -219,14 +348,7 @@ const LiveResults = () => {
         </div>
         
         {loading ? (
-          <>
-            <SkeletonLoader className="h-6 w-48 mb-4" />
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-              <SkeletonLoader className="h-96 lg:col-span-2 rounded" />
-              <SkeletonLoader className="h-96 rounded" />
-            </div>
-            <SkeletonLoader className="h-10 rounded" />
-          </>
+          <Loader text="Loading results..." />
         ) : (
           <>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">

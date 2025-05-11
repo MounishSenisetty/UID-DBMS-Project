@@ -14,72 +14,122 @@ const Results = () => {
     constituencies: 0,
     completedStations: 0
   })
-  const [constituencyId, setConstituencyId] = useState('')
-  const [ward, setWard] = useState('')
-  const [constituencies, setConstituencies] = useState([])
-
+  
   useEffect(() => {
-    fetchConstituencies()
+    fetchResults()
   }, [])
-
-  useEffect(() => {
-    if (constituencyId) {
-      fetchResults()
-    }
-  }, [constituencyId, ward])
-
-  const fetchConstituencies = async () => {
-    try {
-      const response = await api.get('/api/constituencies')
-      setConstituencies(response.data)
-    } catch (error) {
-      console.error('Error fetching constituencies:', error)
-    }
-  }
-
+  
   const fetchResults = async () => {
     setLoading(true)
     try {
-      const params = new URLSearchParams()
-      if (constituencyId) params.append('constituencyId', constituencyId)
-      if (ward) params.append('ward', ward)
-
-      const response = await api.get(`/api/results?${params.toString()}`)
-      const { partyVotes, totalVotes } = response.data
-
-      // Transform partyVotes object to array for charts and table
-      const resultsArray = Object.entries(partyVotes).map(([party, votes]) => ({
-        party,
-        votes,
-      }))
-
-      setResults(resultsArray)
-      setStatistics(prev => ({ ...prev, totalVotes }))
+      // Simulated API call
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      setResults([
+        {
+          id: 1,
+          constituency: 'Northern District',
+          totalVotes: 3980,
+          turnout: 79.6,
+          completed: true,
+          candidates: [
+            { name: 'John Smith', party: 'Progressive Party', votes: 1245 },
+            { name: 'Emma Johnson', party: 'Conservative Alliance', votes: 1102 },
+            { name: 'Michael Brown', party: 'Liberty Union', votes: 897 },
+            { name: 'Sarah Wilson', party: 'Green Future', votes: 736 }
+          ]
+        },
+        {
+          id: 2,
+          constituency: 'Southern District',
+          totalVotes: 4489,
+          turnout: 82.3,
+          completed: true,
+          candidates: [
+            { name: 'David Lee', party: 'Progressive Party', votes: 1523 },
+            { name: 'Lisa Chen', party: 'Conservative Alliance', votes: 1211 },
+            { name: 'Robert Garcia', party: 'Liberty Union', votes: 943 },
+            { name: 'Jennifer Kim', party: 'Green Future', votes: 812 }
+          ]
+        },
+        {
+          id: 3,
+          constituency: 'Eastern District',
+          totalVotes: 2599,
+          turnout: 65.2,
+          completed: true,
+          candidates: [
+            { name: 'Thomas Parker', party: 'Progressive Party', votes: 1342 },
+            { name: 'Maria Rodriguez', party: 'Conservative Alliance', votes: 1257 }
+          ]
+        },
+        {
+          id: 4,
+          constituency: 'Western District',
+          totalVotes: 3085,
+          turnout: 68.7,
+          completed: true,
+          candidates: [
+            { name: 'James Wilson', party: 'Progressive Party', votes: 1654 },
+            { name: 'Elizabeth Taylor', party: 'Liberty Union', votes: 1431 }
+          ]
+        },
+        {
+          id: 5,
+          constituency: 'Central District',
+          totalVotes: 4762,
+          turnout: 79.4,
+          completed: true,
+          candidates: [
+            { name: 'Charles Martin', party: 'Conservative Alliance', votes: 1876 },
+            { name: 'Patricia Adams', party: 'Progressive Party', votes: 1754 },
+            { name: 'Daniel Wright', party: 'Green Future', votes: 1132 }
+          ]
+        }
+      ])
+      
+      setStatistics({
+        totalVotes: 18915,
+        turnout: 75.66,
+        constituencies: 5,
+        completedStations: 25
+      })
     } catch (error) {
       console.error('Error fetching results:', error)
     } finally {
       setLoading(false)
     }
   }
-
+  
+  // Calculate party-wise results
+  const partyResults = results.reduce((acc, constituency) => {
+    constituency.candidates.forEach(candidate => {
+      if (!acc[candidate.party]) {
+        acc[candidate.party] = 0
+      }
+      acc[candidate.party] += candidate.votes
+    })
+    return acc
+  }, {})
+  
   const partyColors = {
     'Progressive Party': '#3366CC',
     'Conservative Alliance': '#DC3912',
     'Liberty Union': '#FF9900',
     'Green Future': '#109618'
   }
-
+  
   const chartData = {
-    labels: results.map(r => r.party),
+    labels: Object.keys(partyResults),
     datasets: [
       {
-        data: results.map(r => r.votes),
-        backgroundColor: results.map(r => partyColors[r.party] || '#888'),
+        data: Object.values(partyResults),
+        backgroundColor: Object.keys(partyResults).map(party => partyColors[party]),
         borderWidth: 0,
       }
     ]
   }
-
+  
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -89,49 +139,66 @@ const Results = () => {
       },
     },
   }
-
+  
   const columns = [
     {
-      header: 'Party',
-      accessor: 'party',
+      header: 'Constituency',
+      accessor: 'constituency',
     },
     {
-      header: 'Votes',
-      accessor: 'votes',
-      render: (row) => row.votes.toLocaleString(),
+      header: 'Total Votes',
+      accessor: 'totalVotes',
+      render: (row) => row.totalVotes.toLocaleString(),
+    },
+    {
+      header: 'Turnout',
+      accessor: 'turnout',
+      render: (row) => `${row.turnout}%`,
+    },
+    {
+      header: 'Status',
+      accessor: 'completed',
+      render: (row) => (
+        <span className={`badge ${row.completed ? 'badge-success' : 'badge-warning'}`}>
+          {row.completed ? 'Completed' : 'In Progress'}
+        </span>
+      ),
+    },
+    {
+      header: 'Leading Candidate',
+      render: (row) => {
+        const leadingCandidate = [...row.candidates].sort((a, b) => b.votes - a.votes)[0]
+        return (
+          <div>
+            <div className="font-medium">{leadingCandidate.name}</div>
+            <div className="text-sm text-neutral-500">{leadingCandidate.party}</div>
+          </div>
+        )
+      },
+    },
+    {
+      header: 'Actions',
+      render: (row) => (
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => {/* View details */}}
+        >
+          View Details
+        </Button>
+      ),
     },
   ]
-
+  
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-neutral-900">Election Results</h2>
         <p className="mt-1 text-sm text-neutral-500">
-          View and analyze election results across constituencies and wards
+          View and analyze election results across all constituencies
         </p>
       </div>
-
-      <div className="flex space-x-4 mb-4">
-        <select
-          value={constituencyId}
-          onChange={(e) => setConstituencyId(e.target.value)}
-          className="border border-gray-300 rounded px-3 py-2"
-        >
-          <option value="">Select Constituency</option>
-          {constituencies.map(c => (
-            <option key={c.id} value={c.id}>{c.name}</option>
-          ))}
-        </select>
-
-        <input
-          type="text"
-          placeholder="Enter Ward"
-          value={ward}
-          onChange={(e) => setWard(e.target.value)}
-          className="border border-gray-300 rounded px-3 py-2"
-        />
-      </div>
-
+      
       {/* Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="bg-primary-50">
@@ -147,7 +214,7 @@ const Results = () => {
             </div>
           </div>
         </Card>
-
+        
         <Card className="bg-secondary-50">
           <div className="flex items-center">
             <div className="rounded-full bg-secondary-100 p-3">
@@ -162,7 +229,7 @@ const Results = () => {
             </div>
           </div>
         </Card>
-
+        
         <Card className="bg-accent-50">
           <div className="flex items-center">
             <div className="rounded-full bg-accent-100 p-3">
@@ -176,7 +243,7 @@ const Results = () => {
             </div>
           </div>
         </Card>
-
+        
         <Card className="bg-success-50">
           <div className="flex items-center">
             <div className="rounded-full bg-success-100 p-3">
@@ -191,7 +258,7 @@ const Results = () => {
           </div>
         </Card>
       </div>
-
+      
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card title="Party-wise Results">
@@ -212,7 +279,7 @@ const Results = () => {
             />
           </div>
         </Card>
-
+        
         <Card title="Vote Distribution">
           <div className="h-80">
             <Doughnut
@@ -231,7 +298,7 @@ const Results = () => {
           </div>
         </Card>
       </div>
-
+      
       {/* Results table */}
       <Card title="Constituency Results">
         <Table

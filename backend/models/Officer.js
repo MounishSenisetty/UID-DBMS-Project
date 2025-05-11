@@ -1,6 +1,5 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
-const PollingStation = require('./PollingStation');
 
 const Officer = sequelize.define('Officer', {
   id: {
@@ -13,20 +12,16 @@ const Officer = sequelize.define('Officer', {
     allowNull: false,
   },
   role: {
-    type: DataTypes.ENUM('returning', 'registration', 'polling', 'presiding'),
+    type: DataTypes.ENUM('returning_officer', 'registration_officer', 'polling_officer', 'presiding_officer'),
     allowNull: false,
   },
   pollingStationId: {
     type: DataTypes.INTEGER,
-    field: 'pollingstationid',
     references: {
-      model: 'pollingstations',
+      model: 'PollingStations',  // Use table name as string
       key: 'id',
     },
   },
-}, {
-  tableName: 'officers',
-  timestamps: false,
 });
 
 module.exports = Officer;

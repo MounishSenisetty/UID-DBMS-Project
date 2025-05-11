@@ -5,10 +5,54 @@ import { useAuth } from '../../contexts/AuthContext'
 import Button from '../../components/common/Button'
 import Input from '../../components/common/Input'
 import api from '../../services/api';
+
 const Login = () => {
-  const { login, setCurrentUser } = useAuth()
+  const { login } = useAuth()
   const [loading, setLoading] = useState(false)
   const { register, handleSubmit, formState: { errors } } = useForm()
+
+  const demoAccounts = {
+    admin: { id: 1, password: 'password123', role: 'admin' },
+    officer: { id: 2, password: 'password123', role: 'polling_officer' },
+    elector: { id: 3, password: 'password123', role: 'elector' }
+  };
+
+  const showDemoDetails = (role) => {
+    const account = demoAccounts[role];
+    alert(`Demo ${role.charAt(0).toUpperCase() + role.slice(1)}\nID: ${account.id}\nPassword: ${account.password}`);
+  };
+
+  const demoLogin = async (role) => {
+    setLoading(true);
+    const account = demoAccounts[role];
+    const payload = { id: account.id, password: account.password };
+    try {
+      const response = await api.post('/user/login', payload);
+      localStorage.setItem("userId", response.data.user.linkedId);
+      const role = response.data.user.role;
+      const officerRoles = [
+        'returning_officer',
+        'registration_officer',
+        'polling_officer',
+        'presiding_officer'
+      ];
+      if (role === 'admin') {
+        window.location.href = '/admin';
+      } else if (role === 'elector') {
+        window.location.href = '/elector';
+      } else if (officerRoles.includes(role)) {
+        window.location.href = '/officer';
+      } else {
+        window.location.href = '/login';
+      }
+      localStorage.setItem("token", response.data.token);
+    } catch (err) {
+      alert('Demo login failed.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const onSubmit = async (data) => {
     setLoading(true);
     const payload = {
@@ -20,21 +64,24 @@ const Login = () => {
       const response = await api.post('/user/login', payload);
       console.log('User found:', response.data);
       
-      // Store the full user object for role-based access
-      localStorage.setItem("user", JSON.stringify(response.data.user));
-      setCurrentUser(response.data.user);
-      
-      // Redirect based on the user's role with mapping for officer roles
-      const officerRoles = ['returning_officer', 'registration_officer', 'polling_officer', 'presiding_officer'];
-      let redirectPath = '/login';
-      if (response.data.user.role === 'admin') {
-        redirectPath = '/admin';
-      } else if (officerRoles.includes(response.data.user.role)) {
-        redirectPath = '/officer';
-      } else if (response.data.user.role === 'elector') {
-        redirectPath = '/elector';
+      // Store the linkedId instead of the id
+      localStorage.setItem("userId", response.data.user.linkedId);
+      const role = response.data.user.role;
+      const officerRoles = [
+        'returning_officer',
+        'registration_officer',
+        'polling_officer',
+        'presiding_officer'
+      ];
+      if (role === 'admin') {
+        window.location.href = '/admin';
+      } else if (role === 'elector') {
+        window.location.href = '/elector';
+      } else if (officerRoles.includes(role)) {
+        window.location.href = '/officer';
+      } else {
+        window.location.href = '/login';
       }
-      window.location.href = redirectPath;
       
       // If you want to store the token for later use (e.g., in localStorage or as a global state):
       localStorage.setItem("token", response.data.token);
@@ -49,7 +96,7 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-[calc(100vh-13rem)] flex flex-col justify-center">
+    <div className="min-h-[calc(100vh-13rem)] flex flex-col justify-center m-0 p-0">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <svg
           className="mx-auto h-16 w-16 text-primary-500"
@@ -85,6 +132,7 @@ const Login = () => {
               label="ID"
               type="number"
               id="id"
+              autoComplete="username"
               {...register('id', { required: 'ID is required' })}
             />
 
@@ -146,27 +194,54 @@ const Login = () => {
             </div>
 
             <div className="mt-6 grid grid-cols-1 gap-3">
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => login({ email: 'admin@example.com', password: 'password123' })}
-              >
-                Demo Admin Login
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => login({ email: 'officer@example.com', password: 'password123' })}
-              >
-                Demo Officer Login
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => login({ email: 'elector@example.com', password: 'password123' })}
-              >
-                Demo Elector Login
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => demoLogin('admin')}
+                >
+                  Demo Admin Login
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => showDemoDetails('admin')}
+                >
+                  Show Demo Details
+                </Button>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => demoLogin('officer')}
+                >
+                  Demo Officer Login
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => showDemoDetails('officer')}
+                >
+                  Show Demo Details
+                </Button>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => demoLogin('elector')}
+                >
+                  Demo Elector Login
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => showDemoDetails('elector')}
+                >
+                  Show Demo Details
+                </Button>
+              </div>
             </div>
           </div>
         </div>

@@ -5,12 +5,10 @@ import Button from '../../components/common/Button'
 import Modal from '../../components/common/Modal'
 import Input from '../../components/common/Input'
 import { useForm } from 'react-hook-form'
-import api from '../../services/api'
+// import api from '../../services/api'
 
 const Candidates = () => {
   const [candidates, setCandidates] = useState([])
-  const [parties, setParties] = useState([])
-  const [constituencies, setConstituencies] = useState([])
   const [loading, setLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingCandidate, setEditingCandidate] = useState(null)
@@ -19,38 +17,64 @@ const Candidates = () => {
   
   useEffect(() => {
     fetchCandidates()
-    fetchParties()
-    fetchConstituencies()
   }, [])
   
   const fetchCandidates = async () => {
     setLoading(true)
     try {
-      const response = await api.get('/api/candidates')
-      setCandidates(response.data)
+      // Simulated API call
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      setCandidates([
+        {
+          id: 1,
+          name: 'John Smith',
+          party: 'Progressive Party',
+          constituency: 'Northern District',
+          position: 'Member of Parliament',
+          votes: 1245,
+          status: 'approved'
+        },
+        {
+          id: 2,
+          name: 'Emma Johnson',
+          party: 'Conservative Alliance',
+          constituency: 'Southern District',
+          position: 'Member of Parliament',
+          votes: 1102,
+          status: 'approved'
+        },
+        {
+          id: 3,
+          name: 'Michael Brown',
+          party: 'Liberty Union',
+          constituency: 'Eastern District',
+          position: 'Member of Parliament',
+          votes: 897,
+          status: 'approved'
+        },
+        {
+          id: 4,
+          name: 'Sarah Wilson',
+          party: 'Green Future',
+          constituency: 'Western District',
+          position: 'Member of Parliament',
+          votes: 736,
+          status: 'approved'
+        },
+        {
+          id: 5,
+          name: 'David Lee',
+          party: 'Progressive Party',
+          constituency: 'Central District',
+          position: 'Member of Parliament',
+          votes: 1523,
+          status: 'approved'
+        },
+      ])
     } catch (error) {
       console.error('Error fetching candidates:', error)
-      alert('Error fetching candidates: ' + error.message)
     } finally {
       setLoading(false)
-    }
-  }
-
-  const fetchParties = async () => {
-    try {
-      const response = await api.get('/api/parties')
-      setParties(response.data)
-    } catch (error) {
-      console.error('Error fetching parties:', error)
-    }
-  }
-
-  const fetchConstituencies = async () => {
-    try {
-      const response = await api.get('/api/constituencies')
-      setConstituencies(response.data)
-    } catch (error) {
-      console.error('Error fetching constituencies:', error)
     }
   }
   
@@ -61,13 +85,29 @@ const Candidates = () => {
     },
     {
       header: 'Party',
-      accessor: 'partyName',
-      render: (row) => row.partyName || '',
+      accessor: 'party',
     },
     {
       header: 'Constituency',
-      accessor: 'constituencyName',
-      render: (row) => row.constituencyName || '',
+      accessor: 'constituency',
+    },
+    {
+      header: 'Position',
+      accessor: 'position',
+    },
+    {
+      header: 'Votes',
+      accessor: 'votes',
+      render: (row) => row.votes.toLocaleString(),
+    },
+    {
+      header: 'Status',
+      accessor: 'status',
+      render: (row) => (
+        <span className={`badge ${row.status === 'approved' ? 'badge-success' : 'badge-warning'}`}>
+          {row.status.charAt(0).toUpperCase() + row.status.slice(1)}
+        </span>
+      ),
     },
     {
       header: 'Actions',
@@ -101,11 +141,10 @@ const Candidates = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this candidate?')) {
       try {
-        await api.delete(`/api/candidates/${id}`)
+        // API call would go here
         setCandidates(candidates.filter(c => c.id !== id))
       } catch (error) {
         console.error('Error deleting candidate:', error)
-        alert('Error deleting candidate: ' + error.message)
       }
     }
   }
@@ -113,14 +152,20 @@ const Candidates = () => {
   const onSubmit = async (data) => {
     try {
       if (editingCandidate) {
-        await api.put(`/api/candidates/${editingCandidate.id}`, data)
+        // Update existing candidate
         const updatedCandidates = candidates.map(c => 
           c.id === editingCandidate.id ? { ...c, ...data } : c
         )
         setCandidates(updatedCandidates)
       } else {
-        const response = await api.post('/api/candidates', data)
-        setCandidates([...candidates, response.data])
+        // Add new candidate
+        const newCandidate = {
+          id: candidates.length + 1,
+          ...data,
+          votes: 0,
+          status: 'pending'
+        }
+        setCandidates([...candidates, newCandidate])
       }
       
       setIsModalOpen(false)
@@ -128,7 +173,6 @@ const Candidates = () => {
       reset()
     } catch (error) {
       console.error('Error saving candidate:', error)
-      alert('Error saving candidate: ' + error.message)
     }
   }
   
@@ -178,35 +222,23 @@ const Candidates = () => {
             error={errors.name?.message}
           />
           
-          <label className="block mb-2 font-medium text-gray-700">Party</label>
-          <select
-            {...register('partyId', { required: 'Party is required' })}
-            className="w-full p-2 border border-gray-300 rounded"
-            defaultValue=""
-          >
-            <option value="" disabled>Select a party</option>
-            {parties.map((party) => (
-              <option key={party.id} value={party.id}>
-                {party.name}
-              </option>
-            ))}
-          </select>
-          {errors.partyId && <p className="text-red-600 text-sm mt-1">{errors.partyId.message}</p>}
-
-          <label className="block mb-2 font-medium text-gray-700">Constituency</label>
-          <select
-            {...register('constituencyId', { required: 'Constituency is required' })}
-            className="w-full p-2 border border-gray-300 rounded"
-            defaultValue=""
-          >
-            <option value="" disabled>Select a constituency</option>
-            {constituencies.map((constituency) => (
-              <option key={constituency.id} value={constituency.id}>
-                {constituency.name}
-              </option>
-            ))}
-          </select>
-          {errors.constituencyId && <p className="text-red-600 text-sm mt-1">{errors.constituencyId.message}</p>}
+          <Input
+            label="Party"
+            {...register('party', { required: 'Party is required' })}
+            error={errors.party?.message}
+          />
+          
+          <Input
+            label="Constituency"
+            {...register('constituency', { required: 'Constituency is required' })}
+            error={errors.constituency?.message}
+          />
+          
+          <Input
+            label="Position"
+            {...register('position', { required: 'Position is required' })}
+            error={errors.position?.message}
+          />
           
           <div className="mt-6 flex justify-end space-x-3">
             <Button

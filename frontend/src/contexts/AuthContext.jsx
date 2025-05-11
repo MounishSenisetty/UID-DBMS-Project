@@ -10,16 +10,15 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
-    if (user) {
-      setCurrentUser(JSON.parse(user));
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+      setCurrentUser(userId);
     }
     setLoading(false); // Finished checking localStorage
   }, []);
 
   const logout = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
     setCurrentUser(null);
     window.location.href = '/login';
   };

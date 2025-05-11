@@ -1,18 +1,10 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
-const PollingStation = require('./PollingStation');
 
 const Elector = sequelize.define('Elector', {
-  id: {
+  serialNumber: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    autoIncrement: true,
-  },
-  serialNumber: {
-    type: DataTypes.STRING,
-    field: 'serialnumber',
-    allowNull: false,
-    unique: true,
   },
   name: {
     type: DataTypes.STRING,
@@ -20,15 +12,11 @@ const Elector = sequelize.define('Elector', {
   },
   pollingStationId: {
     type: DataTypes.INTEGER,
-    field: 'pollingstationid',
     references: {
-      model: 'pollingstations',
+      model: 'PollingStations',  // Use table name as string
       key: 'id',
     },
   },
-}, {
-  tableName: 'electors',
-  timestamps: false,
 });
 
 module.exports = Elector;
