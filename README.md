@@ -59,6 +59,8 @@ A full-stack web application for managing elections, including admin, officer, a
    ```bash
    cd backend
    npm start
+   or
+   node server.js
    ```
 
 5. **Start the frontend development server:**
@@ -67,6 +69,8 @@ A full-stack web application for managing elections, including admin, officer, a
    npm run dev
    # or
    yarn dev
+   or
+   npx vite 
    ```
 
 6. **Access the app:**
