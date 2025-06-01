@@ -5,7 +5,7 @@ import Button from '../../components/common/Button'
 import Modal from '../../components/common/Modal'
 import Input from '../../components/common/Input'
 import { useForm } from 'react-hook-form'
-import { toast } from 'react-hot-toast'
+import { toast } from 'react-toastify'
 import api from '../../services/api'
 
 const Parties = () => {
@@ -24,91 +24,22 @@ const Parties = () => {
   const fetchParties = async () => {
     setLoading(true)
     try {
-      // Try API call first, fallback to mock data
-      let partiesData
-      try {
-        const response = await api.get('/parties')
-        partiesData = response.data
-      } catch {
-        console.log('API unavailable, using mock data')
-        partiesData = [
-          {
-            id: 1,
-            name: 'Progressive Party',
-            code: 'PP',
-            leader: 'John Smith',
-            founded: '1985',
-            candidates: 12,
-            color: '#3366CC',
-            status: 'active',
-            description: 'Progressive policies for modern governance',
-            headquarters: 'Downtown Capitol Building'
-          },
-          {
-            id: 2,
-            name: 'Conservative Alliance',
-            code: 'CA',
-            leader: 'Emma Johnson',
-            founded: '1992',
-            candidates: 15,
-            color: '#DC3912',
-            status: 'active',
-            description: 'Traditional values and fiscal responsibility',
-            headquarters: 'Heritage Plaza'
-          },
-          {
-            id: 3,
-            name: 'Liberty Union',
-            code: 'LU',
-            leader: 'Michael Brown',
-            founded: '1998',
-            candidates: 10,
-            color: '#FF9900',
-            status: 'active',
-            description: 'Individual freedom and limited government',
-            headquarters: 'Freedom Square'
-          },
-          {
-            id: 4,
-            name: 'Green Future',
-            code: 'GF',
-            leader: 'Sarah Wilson',
-            founded: '2005',
-            candidates: 8,
-            color: '#109618',
-            status: 'active',
-            description: 'Environmental sustainability and clean energy',
-            headquarters: 'Eco Center'
-          },
-          {
-            id: 5,
-            name: 'People\'s Democratic Party',
-            code: 'PDP',
-            leader: 'David Martinez',
-            founded: '2010',
-            candidates: 6,
-            color: '#9900FF',
-            status: 'active',
-            description: 'Social democracy and workers\' rights',
-            headquarters: 'Unity Hall'
-          },
-          {
-            id: 6,
-            name: 'Independent Movement',
-            code: 'IM',
-            leader: 'Lisa Anderson',
-            founded: '2018',
-            candidates: 3,
-            color: '#666666',
-            status: 'inactive',
-            description: 'Non-partisan independent candidates',
-            headquarters: 'Civic Center'
-          },
-        ]
-      }
-      
-      await new Promise(resolve => setTimeout(resolve, 800))
-      setParties(partiesData)
+      const response = await api.get('/api/parties')
+      // Enrich with placeholder fields for display
+      const enriched = response.data.map(p => ({
+        id: p.id,
+        name: p.name,
+        code: p.symbol || p.name.slice(0,3).toUpperCase(),
+        symbol: p.symbol || '',
+        founded: new Date().getFullYear().toString(),
+        leader: '',
+        headquarters: '',
+        description: '',
+        status: 'active',
+        color: '#ccc',
+        candidates: 0
+      }))
+      setParties(enriched)
     } catch (error) {
       console.error('Error fetching parties:', error)
       toast.error('Failed to load parties data')
@@ -141,16 +72,16 @@ const Parties = () => {
       header: 'Party Information',
       accessor: 'name',
       render: (row) => (
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2 sm:space-x-3">
           <div 
-            className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm"
+            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm"
             style={{ backgroundColor: row.color }}
           >
             {row.code}
           </div>
-          <div>
-            <div className="font-medium text-gray-900">{row.name}</div>
-            <div className="text-sm text-gray-500">🏛️ {row.code} • Founded {row.founded}</div>
+          <div className="min-w-0 flex-1">
+            <div className="font-medium text-gray-900 text-sm sm:text-base truncate">{row.name}</div>
+            <div className="text-xs sm:text-sm text-gray-500 truncate">🏛️ {row.code} • Founded {row.founded}</div>
           </div>
         </div>
       ),
@@ -159,9 +90,9 @@ const Parties = () => {
       header: 'Leadership',
       accessor: 'leader',
       render: (row) => (
-        <div className="text-sm">
-          <div className="font-medium text-gray-900">👤 {row.leader}</div>
-          <div className="text-gray-500">📍 {row.headquarters}</div>
+        <div className="text-xs sm:text-sm">
+          <div className="font-medium text-gray-900 truncate">👤 {row.leader}</div>
+          <div className="text-gray-500 truncate">📍 {row.headquarters}</div>
         </div>
       ),
     },
@@ -169,7 +100,7 @@ const Parties = () => {
       header: 'Candidates & Activity',
       accessor: 'candidates',
       render: (row) => (
-        <div className="text-sm">
+        <div className="text-xs sm:text-sm">
           <div className="font-medium text-gray-900">
             👥 {row.candidates} Candidates
           </div>
@@ -183,7 +114,7 @@ const Parties = () => {
       header: 'Description',
       accessor: 'description',
       render: (row) => (
-        <div className="text-sm text-gray-600 max-w-xs">
+        <div className="text-xs sm:text-sm text-gray-600 max-w-xs truncate">
           {row.description}
         </div>
       ),
@@ -192,7 +123,7 @@ const Parties = () => {
       header: 'Status',
       accessor: 'status',
       render: (row) => (
-        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+        <span className={`inline-flex items-center px-1.5 sm:px-2.5 py-0.5 rounded-full text-xs font-medium ${
           row.status === 'active' 
             ? 'bg-green-100 text-green-800' 
             : 'bg-red-100 text-red-800'
@@ -204,12 +135,13 @@ const Parties = () => {
     {
       header: 'Actions',
       render: (row) => (
-        <div className="flex space-x-2">
+        <div className="flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-2">
           <Button
             variant="secondary"
             size="sm"
             onClick={() => handleEdit(row)}
-            className="hover:bg-blue-50 hover:text-blue-600"
+            className="hover:bg-blue-50 hover:text-blue-600 text-xs sm:text-sm min-h-[36px]"
+            fullWidth
           >
             ✏️ Edit
           </Button>
@@ -217,7 +149,8 @@ const Parties = () => {
             variant="error"
             size="sm"
             onClick={() => handleDelete(row.id)}
-            className="hover:bg-red-50 hover:text-red-600"
+            className="hover:bg-red-50 hover:text-red-600 text-xs sm:text-sm min-h-[36px]"
+            fullWidth
           >
             🗑️ Delete
           </Button>
@@ -235,7 +168,7 @@ const Parties = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this party?')) {
       try {
-        // API call would go here
+        await api.delete(`/api/parties/${id}`)
         setParties(parties.filter(p => p.id !== id))
         toast.success('Party deleted successfully')
       } catch (error) {
@@ -249,21 +182,13 @@ const Parties = () => {
     try {
       if (editingParty) {
         // Update existing party
-        const updatedParties = parties.map(p => 
-          p.id === editingParty.id ? { ...p, ...data } : p
-        )
-        setParties(updatedParties)
+        await api.put(`/api/parties/${editingParty.id}`, data)
+        await fetchParties() // Refresh data from server
         toast.success('Party updated successfully')
       } else {
         // Add new party
-        const newParty = {
-          id: parties.length + 1,
-          ...data,
-          candidates: 0,
-          status: 'active',
-          headquarters: data.headquarters || 'TBD'
-        }
-        setParties([...parties, newParty])
+        await api.post('/api/parties', data)
+        await fetchParties() // Refresh data from server
         toast.success('Party added successfully')
       }
       
@@ -279,14 +204,14 @@ const Parties = () => {
   return (
     <div className="space-y-6">
       {/* Header with gradient background */}
-      <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 rounded-xl p-6 text-white">
-        <div className="flex justify-between items-start">
-          <div>
-            <h2 className="text-3xl font-bold">Political Parties Management</h2>
-            <p className="mt-2 text-purple-100">
+      <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 rounded-xl p-4 sm:p-6 text-white">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start space-y-4 sm:space-y-0">
+          <div className="flex-1">
+            <h2 className="text-2xl sm:text-3xl font-bold">Political Parties Management</h2>
+            <p className="mt-2 text-purple-100 text-sm sm:text-base">
               Manage political parties and their organizational details
             </p>
-            <div className="mt-4 flex items-center space-x-4 text-sm">
+            <div className="mt-4 flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm">
               <span className="flex items-center">
                 🏛️ {stats.total} Total Parties
               </span>
@@ -306,7 +231,8 @@ const Parties = () => {
               reset()
               setIsModalOpen(true)
             }}
-            className="bg-white text-purple-600 hover:bg-purple-50"
+            className="bg-white text-purple-600 hover:bg-purple-50 w-full sm:w-auto"
+            responsive
           >
             ➕ Add New Party
           </Button>
@@ -316,68 +242,68 @@ const Parties = () => {
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-purple-600">Total Parties</p>
-                <p className="text-3xl font-bold text-purple-900">{stats.total}</p>
+                <p className="text-xs sm:text-sm font-medium text-purple-600">Total Parties</p>
+                <p className="text-2xl sm:text-3xl font-bold text-purple-900">{stats.total}</p>
               </div>
-              <div className="p-3 bg-purple-500 rounded-full">
-                <span className="text-2xl">🏛️</span>
+              <div className="p-2 sm:p-3 bg-purple-500 rounded-full">
+                <span className="text-lg sm:text-2xl">🏛️</span>
               </div>
             </div>
-            <div className="mt-4 text-sm text-purple-600">
+            <div className="mt-3 sm:mt-4 text-xs sm:text-sm text-purple-600">
               {stats.active} active organizations
             </div>
           </div>
         </Card>
 
         <Card className="bg-gradient-to-br from-pink-50 to-pink-100 border-pink-200">
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-pink-600">Total Candidates</p>
-                <p className="text-3xl font-bold text-pink-900">{stats.totalCandidates}</p>
+                <p className="text-xs sm:text-sm font-medium text-pink-600">Total Candidates</p>
+                <p className="text-2xl sm:text-3xl font-bold text-pink-900">{stats.totalCandidates}</p>
               </div>
-              <div className="p-3 bg-pink-500 rounded-full">
-                <span className="text-2xl">👥</span>
+              <div className="p-2 sm:p-3 bg-pink-500 rounded-full">
+                <span className="text-lg sm:text-2xl">👥</span>
               </div>
             </div>
-            <div className="mt-4 text-sm text-pink-600">
+            <div className="mt-3 sm:mt-4 text-xs sm:text-sm text-pink-600">
               Across all parties
             </div>
           </div>
         </Card>
 
         <Card className="bg-gradient-to-br from-red-50 to-red-100 border-red-200">
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-red-600">Avg. Candidates</p>
-                <p className="text-3xl font-bold text-red-900">{stats.avgCandidatesPerParty}</p>
+                <p className="text-xs sm:text-sm font-medium text-red-600">Avg. Candidates</p>
+                <p className="text-2xl sm:text-3xl font-bold text-red-900">{stats.avgCandidatesPerParty}</p>
               </div>
-              <div className="p-3 bg-red-500 rounded-full">
-                <span className="text-2xl">📊</span>
+              <div className="p-2 sm:p-3 bg-red-500 rounded-full">
+                <span className="text-lg sm:text-2xl">📊</span>
               </div>
             </div>
-            <div className="mt-4 text-sm text-red-600">
+            <div className="mt-3 sm:mt-4 text-xs sm:text-sm text-red-600">
               Per party average
             </div>
           </div>
         </Card>
 
         <Card className="bg-gradient-to-br from-indigo-50 to-indigo-100 border-indigo-200">
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-indigo-600">Oldest Party</p>
-                <p className="text-2xl font-bold text-indigo-900">{stats.oldestParty?.founded}</p>
+                <p className="text-xs sm:text-sm font-medium text-indigo-600">Oldest Party</p>
+                <p className="text-lg sm:text-2xl font-bold text-indigo-900">{stats.oldestParty?.founded}</p>
               </div>
-              <div className="p-3 bg-indigo-500 rounded-full">
-                <span className="text-2xl">🏆</span>
+              <div className="p-2 sm:p-3 bg-indigo-500 rounded-full">
+                <span className="text-lg sm:text-2xl">🏆</span>
               </div>
             </div>
-            <div className="mt-4 text-sm text-indigo-600">
+            <div className="mt-3 sm:mt-4 text-xs sm:text-sm text-indigo-600 truncate">
               {stats.oldestParty?.name}
             </div>
           </div>
@@ -386,8 +312,8 @@ const Parties = () => {
 
       {/* Search */}
       <Card>
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+        <div className="p-4 sm:p-6 border-b border-gray-200">
+          <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
             <div className="flex-1 max-w-md">
               <div className="relative">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
@@ -395,22 +321,22 @@ const Parties = () => {
                 </span>
                 <input
                   type="text"
-                  placeholder="Search parties by name, code, leader, or description..."
+                  placeholder="Search parties by name, code, leader..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 min-h-[44px]"
                 />
               </div>
             </div>
             
             {searchTerm && (
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
                 <p className="text-sm text-gray-600">
                   Showing {filteredParties.length} of {parties.length} parties
                 </p>
                 <button
                   onClick={() => setSearchTerm('')}
-                  className="text-sm text-purple-600 hover:text-purple-800"
+                  className="text-sm text-purple-600 hover:text-purple-800 text-left sm:text-center"
                 >
                   Clear search
                 </button>
@@ -440,13 +366,13 @@ const Parties = () => {
           </div>
         }
       >
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
               label="🏛️ Party Name"
               {...register('name', { required: 'Name is required' })}
               error={errors.name?.message}
-              className="focus:ring-purple-500 focus:border-purple-500"
+              className="focus:ring-purple-500 focus:border-purple-500 min-h-[44px]"
             />
             
             <Input
@@ -454,7 +380,7 @@ const Parties = () => {
               placeholder="e.g., PP, CA, LU"
               {...register('code', { required: 'Code is required' })}
               error={errors.code?.message}
-              className="focus:ring-purple-500 focus:border-purple-500"
+              className="focus:ring-purple-500 focus:border-purple-500 min-h-[44px]"
             />
           </div>
 
@@ -463,7 +389,7 @@ const Parties = () => {
               label="👤 Party Leader"
               {...register('leader', { required: 'Leader is required' })}
               error={errors.leader?.message}
-              className="focus:ring-purple-500 focus:border-purple-500"
+              className="focus:ring-purple-500 focus:border-purple-500 min-h-[44px]"
             />
             
             <Input
@@ -473,7 +399,7 @@ const Parties = () => {
               max={new Date().getFullYear()}
               {...register('founded', { required: 'Founded year is required' })}
               error={errors.founded?.message}
-              className="focus:ring-purple-500 focus:border-purple-500"
+              className="focus:ring-purple-500 focus:border-purple-500 min-h-[44px]"
             />
           </div>
 
@@ -482,7 +408,7 @@ const Parties = () => {
               label="📍 Headquarters"
               placeholder="e.g., Downtown Capitol Building"
               {...register('headquarters')}
-              className="focus:ring-purple-500 focus:border-purple-500"
+              className="focus:ring-purple-500 focus:border-purple-500 min-h-[44px]"
             />
             
             <div>
@@ -492,13 +418,13 @@ const Parties = () => {
               <div className="flex items-center space-x-2">
                 <input
                   type="color"
-                  className="w-12 h-10 border border-gray-300 rounded-md cursor-pointer"
+                  className="w-12 h-10 sm:h-12 border border-gray-300 rounded-md cursor-pointer"
                   {...register('color', { required: 'Color is required' })}
                 />
                 <input
                   type="text"
                   placeholder="#3366CC"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 min-h-[44px]"
                   {...register('color', { required: 'Color is required' })}
                 />
               </div>
@@ -515,12 +441,12 @@ const Parties = () => {
             <textarea
               rows={3}
               placeholder="Describe the party's ideology and key policies..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 min-h-[88px]"
               {...register('description')}
             />
           </div>
           
-          <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+          <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3 pt-4 sm:pt-6 border-t border-gray-200">
             <Button
               type="button"
               variant="outline"
@@ -529,14 +455,16 @@ const Parties = () => {
                 setEditingParty(null)
                 reset()
               }}
-              className="px-6"
+              className="px-6 min-h-[44px]"
+              fullWidth
             >
               Cancel
             </Button>
             <Button
               type="submit"
               variant="primary"
-              className="px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              className="px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 min-h-[44px]"
+              fullWidth
             >
               {editingParty ? '💾 Update Party' : '➕ Create Party'}
             </Button>

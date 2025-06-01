@@ -124,40 +124,37 @@ const ElectorVerification = () => {
   };
 
   if (loading) return <Loader />;
-
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 p-4 sm:p-0">
       {/* Header */}
-      <Card className="p-6 bg-gradient-to-r from-green-600 to-blue-600 text-white">
-        <h1 className="text-3xl font-bold mb-2">Elector Verification</h1>
-        <p className="text-green-100">Verify electors at your assigned polling station</p>
+      <Card className="p-4 sm:p-6 bg-gradient-to-r from-green-600 to-blue-600 text-white">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2">Elector Verification</h1>
+        <p className="text-sm sm:text-base text-green-100">Verify electors at your assigned polling station</p>
       </Card>
 
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="p-6 text-center">
-          <div className="text-3xl font-bold text-blue-600">{stats.total}</div>
-          <div className="text-gray-600">Total Electors</div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
+        <Card className="p-3 sm:p-6 text-center">
+          <div className="text-xl sm:text-3xl font-bold text-blue-600">{stats.total}</div>
+          <div className="text-xs sm:text-base text-gray-600">Total Electors</div>
         </Card>
         
-        <Card className="p-6 text-center">
-          <div className="text-3xl font-bold text-green-600">{stats.verified}</div>
-          <div className="text-gray-600">Verified</div>
+        <Card className="p-3 sm:p-6 text-center">
+          <div className="text-xl sm:text-3xl font-bold text-green-600">{stats.verified}</div>
+          <div className="text-xs sm:text-base text-gray-600">Verified</div>
         </Card>
         
-        <Card className="p-6 text-center">
-          <div className="text-3xl font-bold text-yellow-600">{stats.pending}</div>
-          <div className="text-gray-600">Pending</div>
+        <Card className="p-3 sm:p-6 text-center">
+          <div className="text-xl sm:text-3xl font-bold text-yellow-600">{stats.pending}</div>
+          <div className="text-xs sm:text-base text-gray-600">Pending</div>
         </Card>
         
-        <Card className="p-6 text-center">
-          <div className="text-3xl font-bold text-red-600">{stats.rejected}</div>
-          <div className="text-gray-600">Rejected</div>
+        <Card className="p-3 sm:p-6 text-center">
+          <div className="text-xl sm:text-3xl font-bold text-red-600">{stats.rejected}</div>
+          <div className="text-xs sm:text-base text-gray-600">Rejected</div>
         </Card>
-      </div>
-
-      {/* Search and Filter */}
-      <Card className="p-6">
+      </div>      {/* Search and Filter */}
+      <Card className="p-4 sm:p-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
             <label className="block text-sm font-medium text-gray-700 mb-2">Search Electors</label>
@@ -168,7 +165,7 @@ const ElectorVerification = () => {
               <input
                 type="text"
                 placeholder="Search by name or serial number..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent min-h-[44px]"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -178,7 +175,7 @@ const ElectorVerification = () => {
           <div className="md:w-48">
             <label className="block text-sm font-medium text-gray-700 mb-2">Filter by Status</label>
             <select
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent min-h-[44px]"
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
             >
@@ -189,132 +186,187 @@ const ElectorVerification = () => {
             </select>
           </div>
         </div>
-      </Card>
-
-      {/* Electors Table */}
-      <Card className="p-6">
-        <h2 className="text-xl font-semibold mb-6 flex items-center">
-          <svg className="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      </Card>      {/* Electors Table */}
+      <Card className="p-4 sm:p-6">
+        <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6 flex items-center">
+          <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
           </svg>
-          Elector List ({filteredElectors.length} of {electors.length})
+          <span className="truncate">Elector List ({filteredElectors.length} of {electors.length})</span>
         </h2>
         
         {filteredElectors.length === 0 ? (
-          <div className="text-center py-8">
-            <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="text-center py-6 sm:py-8">
+            <svg className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
-            <p className="text-gray-500">No electors found matching your criteria</p>
+            <p className="text-sm sm:text-base text-gray-500">No electors found matching your criteria</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Serial Number
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Name
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {filteredElectors.map(elector => (
-                  <tr key={elector.serialNumber} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-mono text-gray-900">
-                        {elector.serialNumber}
+          <>
+            {/* Mobile Card View */}
+            <div className="block sm:hidden space-y-3">
+              {filteredElectors.map(elector => (
+                <div key={elector.serialNumber} className="border rounded-lg p-4 bg-white">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center min-w-0 flex-1">
+                      <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                        <span className="text-sm font-medium text-gray-600">
+                          {elector.name.charAt(0)}
+                        </span>
                       </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-3">
-                          <span className="text-sm font-medium text-gray-600">
-                            {elector.name.charAt(0)}
-                          </span>
-                        </div>
-                        <div className="text-sm font-medium text-gray-900">
+                      <div className="min-w-0 flex-1">
+                        <div className="text-sm font-medium text-gray-900 truncate">
                           {elector.name}
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`
-                        inline-flex px-2 py-1 text-xs font-semibold rounded-full
-                        ${elector.verificationStatus === 'Verified' ? 'bg-green-100 text-green-800' :
-                          elector.verificationStatus === 'Rejected' ? 'bg-red-100 text-red-800' :
-                          'bg-yellow-100 text-yellow-800'}
-                      `}>
-                        {elector.verificationStatus}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      {elector.verificationStatus === 'Not Verified' && (
-                        <div className="flex space-x-2 justify-end">
-                          <button
-                            onClick={() => handleVerify(elector.serialNumber)}
-                            className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm transition-colors"
-                          >
-                            Verify
-                          </button>
-                          <button
-                            onClick={() => handleReject(elector.serialNumber)}
-                            className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md text-sm transition-colors"
-                          >
-                            Reject
-                          </button>
+                        <div className="text-xs text-gray-500 font-mono">
+                          {elector.serialNumber}
                         </div>
-                      )}
-                      {elector.verificationStatus === 'Verified' && (
-                        <span className="text-green-600 font-medium">✓ Verified</span>
-                      )}
-                      {elector.verificationStatus === 'Rejected' && (
-                        <span className="text-red-600 font-medium">✗ Rejected</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Card>
+                      </div>
+                    </div>
+                    <span className={`
+                      inline-flex px-2 py-1 text-xs font-semibold rounded-full flex-shrink-0
+                      ${elector.verificationStatus === 'Verified' ? 'bg-green-100 text-green-800' :
+                        elector.verificationStatus === 'Rejected' ? 'bg-red-100 text-red-800' :
+                        'bg-yellow-100 text-yellow-800'}
+                    `}>
+                      {elector.verificationStatus}
+                    </span>
+                  </div>
+                  
+                  {elector.verificationStatus === 'Not Verified' && (
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => handleVerify(elector.serialNumber)}
+                        className="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md text-sm transition-colors touch-manipulation"
+                      >
+                        Verify
+                      </button>
+                      <button
+                        onClick={() => handleReject(elector.serialNumber)}
+                        className="flex-1 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-sm transition-colors touch-manipulation"
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  )}
+                  {elector.verificationStatus === 'Verified' && (
+                    <div className="text-center text-green-600 font-medium text-sm">✓ Verified</div>
+                  )}
+                  {elector.verificationStatus === 'Rejected' && (
+                    <div className="text-center text-red-600 font-medium text-sm">✗ Rejected</div>
+                  )}
+                </div>
+              ))}
+            </div>
 
-      {/* Instructions */}
-      <Card className="p-6 bg-blue-50 border-blue-200">
-        <h3 className="text-lg font-semibold mb-3 text-blue-800">Verification Guidelines</h3>
-        <ul className="space-y-2 text-blue-700 text-sm">
+            {/* Desktop Table View */}
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Serial Number
+                    </th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Name
+                    </th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-4 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {filteredElectors.map(elector => (
+                    <tr key={elector.serialNumber} className="hover:bg-gray-50">
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-mono text-gray-900">
+                          {elector.serialNumber}
+                        </div>
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                            <span className="text-xs sm:text-sm font-medium text-gray-600">
+                              {elector.name.charAt(0)}
+                            </span>
+                          </div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {elector.name}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                        <span className={`
+                          inline-flex px-2 py-1 text-xs font-semibold rounded-full
+                          ${elector.verificationStatus === 'Verified' ? 'bg-green-100 text-green-800' :
+                            elector.verificationStatus === 'Rejected' ? 'bg-red-100 text-red-800' :
+                            'bg-yellow-100 text-yellow-800'}
+                        `}>
+                          {elector.verificationStatus}
+                        </span>
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        {elector.verificationStatus === 'Not Verified' && (
+                          <div className="flex space-x-2 justify-end">
+                            <button
+                              onClick={() => handleVerify(elector.serialNumber)}
+                              className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm transition-colors touch-manipulation"
+                            >
+                              Verify
+                            </button>
+                            <button
+                              onClick={() => handleReject(elector.serialNumber)}
+                              className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md text-sm transition-colors touch-manipulation"
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        )}
+                        {elector.verificationStatus === 'Verified' && (
+                          <span className="text-green-600 font-medium">✓ Verified</span>
+                        )}
+                        {elector.verificationStatus === 'Rejected' && (
+                          <span className="text-red-600 font-medium">✗ Rejected</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+      </Card>      {/* Instructions */}
+      <Card className="p-4 sm:p-6 bg-blue-50 border-blue-200">
+        <h3 className="text-base sm:text-lg font-semibold mb-3 text-blue-800">Verification Guidelines</h3>
+        <ul className="space-y-2 text-blue-700 text-xs sm:text-sm">
           <li className="flex items-start">
-            <svg className="w-4 h-4 mr-2 mt-0.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-3 h-3 sm:w-4 sm:h-4 mr-2 mt-0.5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            Verify identity documents before approving any elector
+            <span>Verify identity documents before approving any elector</span>
           </li>
           <li className="flex items-start">
-            <svg className="w-4 h-4 mr-2 mt-0.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-3 h-3 sm:w-4 sm:h-4 mr-2 mt-0.5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            Cross-check name and serial number with official records
+            <span>Cross-check name and serial number with official records</span>
           </li>
           <li className="flex items-start">
-            <svg className="w-4 h-4 mr-2 mt-0.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-3 h-3 sm:w-4 sm:h-4 mr-2 mt-0.5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            Contact supervisor if you encounter any discrepancies
+            <span>Contact supervisor if you encounter any discrepancies</span>
           </li>
           <li className="flex items-start">
-            <svg className="w-4 h-4 mr-2 mt-0.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-3 h-3 sm:w-4 sm:h-4 mr-2 mt-0.5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            Maintain accurate records of all verification activities
+            <span>Maintain accurate records of all verification activities</span>
           </li>
         </ul>
       </Card>

@@ -5,7 +5,7 @@ import sys
 
 # Database connection parameters
 DB_HOST = "localhost"
-DB_NAME = "election_db"
+DB_NAME = "election_database"
 DB_USER = "postgres"
 DB_PASSWORD = "Mounish@123"
 

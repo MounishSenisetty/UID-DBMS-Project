@@ -7,6 +7,7 @@ const electorsRouter = require('./routes/electors');
 const candidatesRouter = require('./routes/candidates');
 const votesRouter = require('./routes/votes');
 const partiesRouter = require('./routes/parties');
+const constituenciesRouter = require('./routes/constituencies');
 const authRouter = require('./routes/auth');
 const { authenticateJWT } = require('./middleware/auth');
 const app = express();
@@ -29,6 +30,7 @@ app.use('/api/electors', authenticateJWT, electorsRouter);
 app.use('/api/candidates', authenticateJWT, candidatesRouter);
 app.use('/api/votes', authenticateJWT, votesRouter);
 app.use('/api/parties', authenticateJWT, partiesRouter);
+app.use('/api/constituencies', authenticateJWT, constituenciesRouter);
 
 const PORT = process.env.PORT || 5000;
 

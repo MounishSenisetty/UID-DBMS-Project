@@ -12,6 +12,10 @@ const Party = sequelize.define('Party', {
     allowNull: false,
     unique: true,
   },
+  symbol: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 });
 
 module.exports = Party;

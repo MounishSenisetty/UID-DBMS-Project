@@ -46,7 +46,7 @@ def update_database_schema():
     try:
         # Connect to your postgres DB
         conn = psycopg2.connect(
-            dbname="election_management",
+            dbname="election_database",
             user="postgres",
             password="Mounish@123",
             host="localhost",

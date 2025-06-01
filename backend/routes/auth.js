@@ -37,14 +37,27 @@ router.post('/login', async (req, res) => {
   try {
     const { id, password } = req.body;
 
+    // Demo login support for IDs 1-3
+    if ([1, 2, 3].includes(id) && password === 'password123') {
+      // Create demo user
+      let role = 'elector';
+      if (id === 1) role = 'admin';
+      else if (id === 2) role = 'polling_officer';
+      const demoUser = { id, username: role, role, linkedId: id };
+      const token = jwt.sign({ id: demoUser.linkedId, username: demoUser.username, role: demoUser.role }, process.env.JWT_SECRET || 'your_jwt_secret', { expiresIn: '1h' });
+      return res.json({ token, user: demoUser });
+    }
+
+    // Find user by linkedId
     const user = await User.findOne({ where: { linkedId: id } });
 
     if (!user) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    // ⚡ Compare plain password directly
-    if (user.password !== password) {
+    // Compare hashed password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 

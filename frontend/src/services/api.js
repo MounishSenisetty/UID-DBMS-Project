@@ -8,6 +8,10 @@ const api = axios.create({
   }
 })
 
+// Simple cache for API responses
+const apiCache = new Map();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
 // Add request interceptor for authentication
 api.interceptors.request.use(
   (config) => {
@@ -15,14 +19,37 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
+    
+    // Add cache key for GET requests
+    if (config.method === 'get') {
+      config.cacheKey = `${config.baseURL}${config.url}`;
+      
+      // Check cache for GET requests
+      const cached = apiCache.get(config.cacheKey);
+      if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+        // Return cached data
+        config.useCached = true;
+        config.cachedData = cached.data;
+      }
+    }
+    
     return config
   },
   (error) => Promise.reject(error)
 )
 
-// Add response interceptor for error handling
+// Handle cached responses
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Cache GET responses
+    if (response.config.method === 'get' && response.config.cacheKey) {
+      apiCache.set(response.config.cacheKey, {
+        data: response.data,
+        timestamp: Date.now()
+      });
+    }
+    return response;
+  },
   (error) => {
     const originalRequest = error.config
     
@@ -42,5 +69,20 @@ api.interceptors.response.use(
     return Promise.reject(error)
   }
 )
+
+// Clear cache function for invalidating stale data
+api.clearCache = (pattern = null) => {
+  if (pattern) {
+    // Clear specific cache entries matching pattern
+    for (const key of apiCache.keys()) {
+      if (key.includes(pattern)) {
+        apiCache.delete(key);
+      }
+    }
+  } else {
+    // Clear all cache
+    apiCache.clear();
+  }
+};
 
 export default api

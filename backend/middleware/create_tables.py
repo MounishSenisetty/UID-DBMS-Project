@@ -70,7 +70,7 @@ def create_tables():
     try:
         # Connect to your postgres DB - adjust parameters as needed
         conn = psycopg2.connect(
-            dbname="election_management",
+            dbname="election_database",
             user="postgres",
             password="Mounish@123",
             host="localhost",

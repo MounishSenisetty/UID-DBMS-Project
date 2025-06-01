@@ -22,7 +22,7 @@ def populate_sample_data():
     try:
         # Connect to the database
         conn = psycopg2.connect(
-            dbname="election_management",
+            dbname="election_database",
             user="postgres",
             password="Mounish@123",
             host="localhost",

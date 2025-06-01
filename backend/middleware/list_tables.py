@@ -2,7 +2,7 @@ import psycopg2
 
 def list_tables():
     conn = psycopg2.connect(
-        dbname="election_management",
+        dbname="election_database",
         user="postgres", 
         password="Mounish@123",
         host="localhost",

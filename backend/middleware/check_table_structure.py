@@ -5,7 +5,7 @@ def check_table_structure():
     try:
         conn = psycopg2.connect(
             host="localhost",
-            database="election_management",
+            database="election_database",
             user="postgres",
             password="Mounish@123"
         )

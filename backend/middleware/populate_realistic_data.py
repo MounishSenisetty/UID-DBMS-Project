@@ -1,4 +1,5 @@
 import psycopg2
+import psycopg2.errors
 import bcrypt
 from datetime import datetime, timedelta
 import random
@@ -8,7 +9,7 @@ def connect_db():
     try:
         conn = psycopg2.connect(
             host="localhost",
-            database="election_management",
+            database="election_database",  # Use correct database name from .env
             user="postgres",
             password="Mounish@123"
         )
@@ -19,25 +20,21 @@ def connect_db():
 
 def clear_existing_data(cursor):
     """Safely clear existing data while respecting foreign key constraints"""
+    print("Clearing existing data... (ignoring missing tables)")
+    tables = ['electionresults', 'votes', 'electors', 'officers', 'candidates', 'pollingstations', 'parties', 'constituencies']
+    for tbl in tables:
+        try:
+            cursor.execute(f"DELETE FROM {tbl};")
+            print(f"Cleared table {tbl}")
+        except Exception as e:
+            print(f"Skipping table {tbl}: {e}")
+    # Keep admin users only
     try:
-        # Delete in order of dependencies to avoid foreign key violations
-        print("Clearing existing data...")
-        
-        cursor.execute("DELETE FROM electionresults;")
-        cursor.execute("DELETE FROM votes;")
-        cursor.execute("DELETE FROM electors;")
-        cursor.execute("DELETE FROM officers;")
-        cursor.execute("DELETE FROM candidates;")
-        cursor.execute("DELETE FROM pollingstations;")
-        cursor.execute("DELETE FROM parties;")
-        cursor.execute("DELETE FROM constituencies;")
-        cursor.execute("DELETE FROM users WHERE role != 'admin';")  # Keep admin user
-        
-        print("Existing data cleared successfully")
-        
+        cursor.execute("DELETE FROM users WHERE role != 'admin';")
+        print("Cleared non-admin users")
     except Exception as e:
-        print(f"Error clearing data: {e}")
-        raise
+        print(f"Skipping users cleanup: {e}")
+    print("Finished clearing existing data")
 
 def populate_constituencies(cursor):
     """Populate constituencies table"""

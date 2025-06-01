@@ -1,12 +1,12 @@
 // filepath: c:\Users\MOUNISH\Desktop\All\Academics\SEM 4\UID-DBMS-Project\frontend\src\pages\admin\PollingStations.jsx
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import Card from '../../components/common/Card'
 import Table from '../../components/common/Table'
 import Button from '../../components/common/Button'
 import Modal from '../../components/common/Modal'
 import Input from '../../components/common/Input'
 import { useForm } from 'react-hook-form'
-import { toast } from 'react-hot-toast'
+import { toast } from 'react-toastify'
 import api from '../../services/api'
 import { 
   MagnifyingGlassIcon, 
@@ -43,10 +43,10 @@ const PollingStations = () => {
       // Try API call first, fallback to mock data
       let stationsData
       try {
-        const response = await api.get('/polling-stations')
+        const response = await api.get('/api/polling-stations')
         stationsData = response.data
         toast.success('Polling stations data loaded successfully')
-      } catch (apiError) {
+      } catch {
         console.log('API unavailable, using mock data')
         stationsData = [
           {

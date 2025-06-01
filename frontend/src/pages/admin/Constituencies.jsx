@@ -5,7 +5,7 @@ import Button from '../../components/common/Button'
 import Modal from '../../components/common/Modal'
 import Input from '../../components/common/Input'
 import { useForm } from 'react-hook-form'
-import { toast } from 'react-hot-toast'
+import { toast } from 'react-toastify'
 import api from '../../services/api'
 
 const Constituencies = () => {
@@ -24,79 +24,8 @@ const Constituencies = () => {
   const fetchConstituencies = async () => {
     setLoading(true)
     try {
-      // Try API call first, fallback to mock data
-      let constituencyData
-      try {
-        const response = await api.get('/constituencies')
-        constituencyData = response.data
-      } catch {
-        console.log('API unavailable, using mock data')
-        constituencyData = [
-          { 
-            id: 1, 
-            name: 'Northern District', 
-            code: 'ND-001',
-            registeredVoters: 5234,
-            pollingStations: 8,
-            status: 'active',
-            description: 'Covers northern urban and suburban areas',
-            area: '245 sq km'
-          },
-          { 
-            id: 2, 
-            name: 'Southern District', 
-            code: 'SD-001',
-            registeredVoters: 4876,
-            pollingStations: 7,
-            status: 'active',
-            description: 'Includes southern residential zones',
-            area: '198 sq km'
-          },
-          { 
-            id: 3, 
-            name: 'Eastern District', 
-            code: 'ED-001',
-            registeredVoters: 3987,
-            pollingStations: 5,
-            status: 'active',
-            description: 'Eastern commercial and industrial areas',
-            area: '156 sq km'
-          },
-          { 
-            id: 4, 
-            name: 'Western District', 
-            code: 'WD-001',
-            registeredVoters: 4532,
-            pollingStations: 6,
-            status: 'active',
-            description: 'Western mixed-use development zones',
-            area: '189 sq km'
-          },
-          { 
-            id: 5, 
-            name: 'Central District', 
-            code: 'CD-001',
-            registeredVoters: 6244,
-            pollingStations: 9,
-            status: 'active',
-            description: 'Central business and government district',
-            area: '87 sq km'
-          },
-          { 
-            id: 6, 
-            name: 'Riverside District', 
-            code: 'RD-001',
-            registeredVoters: 3456,
-            pollingStations: 4,
-            status: 'inactive',
-            description: 'Riverside recreational and residential area',
-            area: '123 sq km'
-          },
-        ]
-      }
-      
-      await new Promise(resolve => setTimeout(resolve, 800))
-      setConstituencies(constituencyData)
+      const response = await api.get('/api/constituencies')
+      setConstituencies(response.data)
     } catch (error) {
       console.error('Error fetching constituencies:', error)
       toast.error('Failed to load constituencies data')
@@ -126,13 +55,13 @@ const Constituencies = () => {
       header: 'Constituency',
       accessor: 'name',
       render: (row) => (
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
+        <div className="flex items-center space-x-2 sm:space-x-3">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-xs sm:text-sm">
             {row.code.split('-')[0]}
           </div>
-          <div>
-            <div className="font-medium text-gray-900">{row.name}</div>
-            <div className="text-sm text-gray-500">🏛️ {row.code}</div>
+          <div className="min-w-0 flex-1">
+            <div className="font-medium text-gray-900 text-sm sm:text-base truncate">{row.name}</div>
+            <div className="text-xs sm:text-sm text-gray-500 truncate">🏛️ {row.code}</div>
           </div>
         </div>
       ),
@@ -141,11 +70,11 @@ const Constituencies = () => {
       header: 'Voter Information',
       accessor: 'registeredVoters',
       render: (row) => (
-        <div className="text-sm">
+        <div className="text-xs sm:text-sm">
           <div className="font-medium text-gray-900">
             👥 {row.registeredVoters.toLocaleString()} Voters
           </div>
-          <div className="text-gray-500">
+          <div className="text-gray-500 truncate">
             📍 {row.area}
           </div>
         </div>
@@ -155,7 +84,7 @@ const Constituencies = () => {
       header: 'Infrastructure',
       accessor: 'pollingStations',
       render: (row) => (
-        <div className="text-sm">
+        <div className="text-xs sm:text-sm">
           <div className="font-medium text-gray-900">
             🏢 {row.pollingStations} Stations
           </div>
@@ -169,7 +98,7 @@ const Constituencies = () => {
       header: 'Description',
       accessor: 'description',
       render: (row) => (
-        <div className="text-sm text-gray-600 max-w-xs">
+        <div className="text-xs sm:text-sm text-gray-600 max-w-xs truncate">
           {row.description}
         </div>
       ),
@@ -178,7 +107,7 @@ const Constituencies = () => {
       header: 'Status',
       accessor: 'status',
       render: (row) => (
-        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+        <span className={`inline-flex items-center px-1.5 sm:px-2.5 py-0.5 rounded-full text-xs font-medium ${
           row.status === 'active' 
             ? 'bg-green-100 text-green-800' 
             : 'bg-red-100 text-red-800'
@@ -190,12 +119,13 @@ const Constituencies = () => {
     {
       header: 'Actions',
       render: (row) => (
-        <div className="flex space-x-2">
+        <div className="flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-2">
           <Button
             variant="secondary"
             size="sm"
             onClick={() => handleEdit(row)}
-            className="hover:bg-blue-50 hover:text-blue-600"
+            className="hover:bg-blue-50 hover:text-blue-600 text-xs sm:text-sm min-h-[36px]"
+            fullWidth
           >
             ✏️ Edit
           </Button>
@@ -203,7 +133,8 @@ const Constituencies = () => {
             variant="error"
             size="sm"
             onClick={() => handleDelete(row.id)}
-            className="hover:bg-red-50 hover:text-red-600"
+            className="hover:bg-red-50 hover:text-red-600 text-xs sm:text-sm min-h-[36px]"
+            fullWidth
           >
             🗑️ Delete
           </Button>
@@ -221,7 +152,7 @@ const Constituencies = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this constituency?')) {
       try {
-        // API call would go here
+        await api.delete(`/api/constituencies/${id}`)
         setConstituencies(constituencies.filter(c => c.id !== id))
         toast.success('Constituency deleted successfully')
       } catch (error) {
@@ -235,22 +166,13 @@ const Constituencies = () => {
     try {
       if (editingConstituency) {
         // Update existing constituency
-        const updatedConstituencies = constituencies.map(c => 
-          c.id === editingConstituency.id ? { ...c, ...data } : c
-        )
-        setConstituencies(updatedConstituencies)
+        await api.put(`/api/constituencies/${editingConstituency.id}`, data)
+        await fetchConstituencies() // Refresh data from server
         toast.success('Constituency updated successfully')
       } else {
         // Add new constituency
-        const newConstituency = {
-          id: constituencies.length + 1,
-          ...data,
-          registeredVoters: 0,
-          pollingStations: 0,
-          status: 'active',
-          area: '0 sq km'
-        }
-        setConstituencies([...constituencies, newConstituency])
+        await api.post('/api/constituencies', data)
+        await fetchConstituencies() // Refresh data from server
         toast.success('Constituency added successfully')
       }
       
@@ -266,14 +188,14 @@ const Constituencies = () => {
   return (
     <div className="space-y-6">
       {/* Header with gradient background */}
-      <div className="bg-gradient-to-r from-green-600 via-teal-600 to-blue-600 rounded-xl p-6 text-white">
-        <div className="flex justify-between items-start">
-          <div>
-            <h2 className="text-3xl font-bold">Constituencies Management</h2>
-            <p className="mt-2 text-green-100">
+      <div className="bg-gradient-to-r from-green-600 via-teal-600 to-blue-600 rounded-xl p-4 sm:p-6 text-white">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start space-y-4 sm:space-y-0">
+          <div className="flex-1">
+            <h2 className="text-2xl sm:text-3xl font-bold">Constituencies Management</h2>
+            <p className="mt-2 text-green-100 text-sm sm:text-base">
               Manage electoral constituencies and their boundaries
             </p>
-            <div className="mt-4 flex items-center space-x-4 text-sm">
+            <div className="mt-4 flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm">
               <span className="flex items-center">
                 🏛️ {stats.total} Total Constituencies
               </span>
@@ -293,7 +215,8 @@ const Constituencies = () => {
               reset()
               setIsModalOpen(true)
             }}
-            className="bg-white text-green-600 hover:bg-green-50"
+            className="bg-white text-green-600 hover:bg-green-50 w-full sm:w-auto"
+            responsive
           >
             ➕ Add Constituency
           </Button>
@@ -303,68 +226,68 @@ const Constituencies = () => {
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-green-600">Total Constituencies</p>
-                <p className="text-3xl font-bold text-green-900">{stats.total}</p>
+                <p className="text-xs sm:text-sm font-medium text-green-600">Total Constituencies</p>
+                <p className="text-2xl sm:text-3xl font-bold text-green-900">{stats.total}</p>
               </div>
-              <div className="p-3 bg-green-500 rounded-full">
-                <span className="text-2xl">🏛️</span>
+              <div className="p-2 sm:p-3 bg-green-500 rounded-full">
+                <span className="text-lg sm:text-2xl">🏛️</span>
               </div>
             </div>
-            <div className="mt-4 text-sm text-green-600">
+            <div className="mt-3 sm:mt-4 text-xs sm:text-sm text-green-600">
               {stats.active} active districts
             </div>
           </div>
         </Card>
 
         <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-blue-600">Total Voters</p>
-                <p className="text-3xl font-bold text-blue-900">{stats.totalVoters.toLocaleString()}</p>
+                <p className="text-xs sm:text-sm font-medium text-blue-600">Total Voters</p>
+                <p className="text-xl sm:text-3xl font-bold text-blue-900">{stats.totalVoters.toLocaleString()}</p>
               </div>
-              <div className="p-3 bg-blue-500 rounded-full">
-                <span className="text-2xl">👥</span>
+              <div className="p-2 sm:p-3 bg-blue-500 rounded-full">
+                <span className="text-lg sm:text-2xl">👥</span>
               </div>
             </div>
-            <div className="mt-4 text-sm text-blue-600">
+            <div className="mt-3 sm:mt-4 text-xs sm:text-sm text-blue-600">
               Registered across all districts
             </div>
           </div>
         </Card>
 
         <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-purple-600">Polling Stations</p>
-                <p className="text-3xl font-bold text-purple-900">{stats.totalStations}</p>
+                <p className="text-xs sm:text-sm font-medium text-purple-600">Polling Stations</p>
+                <p className="text-2xl sm:text-3xl font-bold text-purple-900">{stats.totalStations}</p>
               </div>
-              <div className="p-3 bg-purple-500 rounded-full">
-                <span className="text-2xl">🏢</span>
+              <div className="p-2 sm:p-3 bg-purple-500 rounded-full">
+                <span className="text-lg sm:text-2xl">🏢</span>
               </div>
             </div>
-            <div className="mt-4 text-sm text-purple-600">
+            <div className="mt-3 sm:mt-4 text-xs sm:text-sm text-purple-600">
               Infrastructure deployed
             </div>
           </div>
         </Card>
 
         <Card className="bg-gradient-to-br from-indigo-50 to-indigo-100 border-indigo-200">
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-indigo-600">Avg. Voters/District</p>
-                <p className="text-3xl font-bold text-indigo-900">{stats.avgVotersPerConstituency.toLocaleString()}</p>
+                <p className="text-xs sm:text-sm font-medium text-indigo-600">Avg. Voters/District</p>
+                <p className="text-lg sm:text-3xl font-bold text-indigo-900">{stats.avgVotersPerConstituency.toLocaleString()}</p>
               </div>
-              <div className="p-3 bg-indigo-500 rounded-full">
-                <span className="text-2xl">📊</span>
+              <div className="p-2 sm:p-3 bg-indigo-500 rounded-full">
+                <span className="text-lg sm:text-2xl">📊</span>
               </div>
             </div>
-            <div className="mt-4 text-sm text-indigo-600">
+            <div className="mt-3 sm:mt-4 text-xs sm:text-sm text-indigo-600 truncate">
               Distribution analysis
             </div>
           </div>
@@ -373,8 +296,8 @@ const Constituencies = () => {
 
       {/* Search */}
       <Card>
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+        <div className="p-4 sm:p-6 border-b border-gray-200">
+          <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
             <div className="flex-1 max-w-md">
               <div className="relative">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
@@ -382,22 +305,22 @@ const Constituencies = () => {
                 </span>
                 <input
                   type="text"
-                  placeholder="Search constituencies by name, code, or description..."
+                  placeholder="Search constituencies by name, code..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 min-h-[44px]"
                 />
               </div>
             </div>
             
             {searchTerm && (
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
                 <p className="text-sm text-gray-600">
                   Showing {filteredConstituencies.length} of {constituencies.length} constituencies
                 </p>
                 <button
                   onClick={() => setSearchTerm('')}
-                  className="text-sm text-green-600 hover:text-green-800"
+                  className="text-sm text-green-600 hover:text-green-800 text-left sm:text-center"
                 >
                   Clear search
                 </button>
@@ -427,13 +350,13 @@ const Constituencies = () => {
           </div>
         }
       >
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
               label="🏛️ Constituency Name"
               {...register('name', { required: 'Name is required' })}
               error={errors.name?.message}
-              className="focus:ring-green-500 focus:border-green-500"
+              className="focus:ring-green-500 focus:border-green-500 min-h-[44px]"
             />
             
             <Input
@@ -441,7 +364,7 @@ const Constituencies = () => {
               placeholder="e.g., ND-001"
               {...register('code', { required: 'Code is required' })}
               error={errors.code?.message}
-              className="focus:ring-green-500 focus:border-green-500"
+              className="focus:ring-green-500 focus:border-green-500 min-h-[44px]"
             />
           </div>
           
@@ -451,7 +374,7 @@ const Constituencies = () => {
               type="number"
               placeholder="e.g., 245"
               {...register('area')}
-              className="focus:ring-green-500 focus:border-green-500"
+              className="focus:ring-green-500 focus:border-green-500 min-h-[44px]"
             />
             
             <div>
@@ -459,7 +382,7 @@ const Constituencies = () => {
                 📊 Status
               </label>
               <select
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 min-h-[44px]"
                 {...register('status', { required: 'Status is required' })}
               >
                 <option value="active">🟢 Active</option>
@@ -478,12 +401,12 @@ const Constituencies = () => {
             <textarea
               rows={3}
               placeholder="Describe the constituency boundaries and key areas..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 min-h-[88px]"
               {...register('description')}
             />
           </div>
           
-          <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+          <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3 pt-4 sm:pt-6 border-t border-gray-200">
             <Button
               type="button"
               variant="outline"
@@ -492,14 +415,16 @@ const Constituencies = () => {
                 setEditingConstituency(null)
                 reset()
               }}
-              className="px-6"
+              className="px-6 min-h-[44px]"
+              fullWidth
             >
               Cancel
             </Button>
             <Button
               type="submit"
               variant="primary"
-              className="px-6 bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700"
+              className="px-6 bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 min-h-[44px]"
+              fullWidth
             >
               {editingConstituency ? '💾 Update Constituency' : '➕ Create Constituency'}
             </Button>

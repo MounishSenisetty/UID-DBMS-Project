@@ -3,7 +3,7 @@ import { Suspense, lazy, useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Loader from './Loader';
-import { useAuth } from '../../contexts/AuthContext';
+import useAuth from '../../contexts/useAuth';
 import PublicLayout from '../../layouts/PublicLayout';
 import AdminLayout from '../../layouts/AdminLayout';
 import OfficerLayout from '../../layouts/OfficerLayout';

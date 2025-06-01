@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
-import { useAuth } from '../contexts/AuthContext'
+import useAuth from '../contexts/useAuth'
 
 const AdminLayout = () => {
   const { user, logout } = useAuth()
