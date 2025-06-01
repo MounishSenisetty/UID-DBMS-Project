@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 
 const PublicLayout = () => {
@@ -111,7 +111,7 @@ const PublicLayout = () => {
         </nav>
       </header>
 
-      <main className="flex-grow w-full px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-grow w-full">
         <Outlet />
       </main>
 

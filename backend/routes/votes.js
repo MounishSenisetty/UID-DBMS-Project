@@ -27,7 +27,7 @@ router.post('/', authenticateJWT, authorizeRoles('elector'), checkIfVoted, async
   }
 });
 
-router.get('/count', authenticateJWT, authorizeRoles('admin', 'returning_officer', 'presiding_officer'), async (req, res) => {
+router.get('/count', authenticateJWT, authorizeRoles('admin', 'returning_officer', 'presiding_officer', 'elector'), async (req, res) => {
   try {
     const voteCounts = await Vote.findAll({
       attributes: [
@@ -41,6 +41,27 @@ router.get('/count', authenticateJWT, authorizeRoles('admin', 'returning_officer
       parseInt(curr.dataValues.voteCount) > parseInt(prev.dataValues.voteCount) ? curr : prev
     );
     res.json({ voteCounts, winner });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get voting statistics for officer dashboard
+router.get('/stats/:stationId', authenticateJWT, authorizeRoles('admin', 'returning_officer', 'polling_officer', 'presiding_officer'), async (req, res) => {
+  try {
+    const totalElectors = await Elector.count({ where: { pollingStationId: req.params.stationId } });
+    const totalVotes = await Vote.count({
+      include: [{
+        model: Elector,
+        where: { pollingStationId: req.params.stationId }
+      }]
+    });
+    
+    res.json({ 
+      totalElectors, 
+      totalVotes, 
+      turnoutPercentage: totalElectors > 0 ? ((totalVotes / totalElectors) * 100).toFixed(2) : 0 
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
