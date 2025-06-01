@@ -1,4 +1,4 @@
-import React from 'react'
+import PropTypes from 'prop-types'
 
 const Card = ({
   children,
@@ -41,6 +41,19 @@ const Card = ({
       )}
     </div>
   )
+}
+
+Card.propTypes = {
+  children: PropTypes.node,
+  title: PropTypes.node,
+  subtitle: PropTypes.node,
+  footer: PropTypes.node,
+  className: PropTypes.string,
+  headerClassName: PropTypes.string,
+  bodyClassName: PropTypes.string,
+  footerClassName: PropTypes.string,
+  hover: PropTypes.bool,
+  padding: PropTypes.oneOf(['none', 'sm', 'default', 'lg'])
 }
 
 export default Card

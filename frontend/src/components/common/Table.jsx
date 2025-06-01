@@ -1,4 +1,4 @@
-import React from 'react'
+import PropTypes from 'prop-types'
 
 const Table = ({ 
   columns, 
@@ -169,6 +169,22 @@ const Table = ({
       </table>
     </div>
   )
+}
+
+Table.propTypes = {
+  columns: PropTypes.arrayOf(PropTypes.shape({
+    header: PropTypes.string.isRequired,
+    accessor: PropTypes.string,
+    render: PropTypes.func,
+    className: PropTypes.string,
+    cellClassName: PropTypes.string
+  })).isRequired,
+  data: PropTypes.array,
+  onRowClick: PropTypes.func,
+  isLoading: PropTypes.bool,
+  emptyMessage: PropTypes.string,
+  className: PropTypes.string,
+  responsive: PropTypes.bool
 }
 
 export default Table

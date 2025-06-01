@@ -1,4 +1,4 @@
-import React from 'react'
+import PropTypes from 'prop-types'
 
 const Loader = ({ fullScreen, size = 'medium', text = 'Loading...' }) => {
   const sizeClasses = {
@@ -26,6 +26,12 @@ const Loader = ({ fullScreen, size = 'medium', text = 'Loading...' }) => {
       {text && <p className="ml-3 text-neutral-600">{text}</p>}
     </div>
   )
+}
+
+Loader.propTypes = {
+  fullScreen: PropTypes.bool,
+  size: PropTypes.oneOf(['small', 'medium', 'large']),
+  text: PropTypes.string
 }
 
 export default Loader

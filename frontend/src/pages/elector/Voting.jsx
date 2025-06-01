@@ -14,7 +14,8 @@ const ElectorVoting = () => {
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [hasVoted, setHasVoted] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [voting, setVoting] = useState(false);  useEffect(() => {
+  const [voting, setVoting] = useState(false);
+  const [electorData, setElectorData] = useState(null);  useEffect(() => {
     const fetchCandidates = async () => {
       try {
         setLoading(true);
@@ -25,7 +26,8 @@ const ElectorVoting = () => {
         console.error('Error fetching candidates:', error);
         if (error.response?.status === 403) {
           toast.error('Not authorized to view candidates. Please check your login status.');
-        } else if (error.response?.status === 404) {          // Fallback to all candidates if the optimized route fails
+        } else if (error.response?.status === 404) {
+          // Fallback to all candidates if the optimized route fails
           try {
             const fallbackResponse = await api.get('/api/candidates');
             setCandidates(fallbackResponse.data);
@@ -35,6 +37,16 @@ const ElectorVoting = () => {
         } else {
           toast.error('Failed to load candidates');
         }
+      }
+    };
+
+    const fetchElectorData = async () => {
+      try {
+        const response = await api.get(`/api/electors/profile/${user.linkedId}`);
+        setElectorData(response.data);
+      } catch (error) {
+        console.error('Error fetching elector data:', error);
+        toast.error('Failed to load elector information');
       }
     };
 
@@ -49,23 +61,27 @@ const ElectorVoting = () => {
     };
 
     if (user?.linkedId) {
-      Promise.all([fetchCandidates(), checkVoteStatus()])
+      Promise.all([fetchCandidates(), fetchElectorData(), checkVoteStatus()])
         .finally(() => setLoading(false));
     } else {
       setLoading(false);
     }
   }, [user]);
-
   const handleVote = async () => {
     if (!selectedCandidate) {
       toast.error('Please select a candidate to vote');
+      return;
+    }
+
+    if (!electorData?.serialNumber) {
+      toast.error('Unable to verify elector information. Please refresh and try again.');
       return;
     }
     
     setVoting(true);
     try {
       await api.post('/api/votes', {
-        electorSerialNumber: user.linkedId,
+        electorSerialNumber: electorData.serialNumber,
         candidateId: selectedCandidate,
       });
       toast.success('Vote cast successfully! Thank you for participating in democracy.');
