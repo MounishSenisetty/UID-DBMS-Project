@@ -4,7 +4,7 @@ const authenticateJWT = (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (authHeader) {
     const token = authHeader.split(' ')[1];
-    jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret', (err, user) => {
+    jwt.verify(token, process.env.JWT_SECRET || 'MYSECRET', (err, user) => {
       if (err) {
         return res.sendStatus(403);
       }

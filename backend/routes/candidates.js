@@ -3,6 +3,8 @@ const router = express.Router();
 const Candidate = require('../models/Candidate');
 const Party = require('../models/Party');
 const Constituency = require('../models/Constituency');
+const Elector = require('../models/Elector');
+const PollingStation = require('../models/PollingStation');
 const { authenticateJWT, authorizeRoles } = require('../middleware/auth');
 
 // Get all candidates - Allow electors to view candidates for voting
@@ -90,32 +92,36 @@ router.get('/by-constituency/:constituencyId', authenticateJWT, authorizeRoles('
   }
 });
 
-// Get candidates for elector's constituency
-router.get('/for-elector/:electorId', authenticateJWT, authorizeRoles('elector'), async (req, res) => {
+// Get candidates for a specific elector (by their constituency)
+router.get('/for-elector/:electorId', authenticateJWT, async (req, res) => {
   try {
-    // First get the elector's constituency
-    const Elector = require('../models/Elector');
-    const PollingStation = require('../models/PollingStation');
-    
+    // First, get the elector's polling station and constituency
     const elector = await Elector.findByPk(req.params.electorId, {
       include: [{
         model: PollingStation,
-        attributes: ['constituencyId']
+        include: [Constituency]
       }]
     });
     
-    if (!elector || !elector.PollingStation) {
-      return res.status(404).json({ error: 'Elector or polling station not found' });
+    if (!elector) {
+      return res.status(404).json({ error: 'Elector not found' });
     }
     
-    const candidates = await Candidate.findAll({ 
-      where: { constituencyId: elector.PollingStation.constituencyId },
+    const constituencyId = elector.PollingStation?.constituencyId;
+    if (!constituencyId) {
+      return res.status(404).json({ error: 'Elector constituency not found' });
+    }
+    
+    // Get candidates for that constituency
+    const candidates = await Candidate.findAll({
+      where: { constituencyId },
       include: [Party, Constituency],
       order: [['name', 'ASC']]
     });
     
     res.json(candidates);
   } catch (error) {
+    console.error('Error fetching candidates for elector:', error);
     res.status(500).json({ error: error.message });
   }
 });

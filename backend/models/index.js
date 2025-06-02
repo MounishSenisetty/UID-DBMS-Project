@@ -14,8 +14,8 @@ const Party = require('./Party');
 Elector.belongsTo(PollingStation, { foreignKey: 'pollingStationId' });
 PollingStation.hasMany(Elector, { foreignKey: 'pollingStationId' });
 
-Elector.hasOne(Vote, { foreignKey: 'electorSerialNumber' });
-Vote.belongsTo(Elector, { foreignKey: 'electorSerialNumber' });
+Elector.hasOne(Vote, { foreignKey: 'electorSerialNumber', sourceKey: 'serialNumber' });
+Vote.belongsTo(Elector, { foreignKey: 'electorSerialNumber', targetKey: 'serialNumber' });
 
 Vote.belongsTo(Candidate, { foreignKey: 'candidateId' });
 Candidate.hasMany(Vote, { foreignKey: 'candidateId' });

@@ -28,14 +28,12 @@ router.post('/', authenticateJWT, authorizeRoles('admin', 'registration_officer'
 router.get('/profile/:id', authenticateJWT, authorizeRoles('elector', 'admin', 'returning_officer', 'registration_officer', 'polling_officer', 'presiding_officer'), async (req, res) => {
   try {
     const elector = await Elector.findByPk(req.params.id, { 
-      include: [{ model: PollingStation, attributes: ['id', 'name', 'area', 'ward'] }],
-      attributes: ['id', 'serialNumber', 'name', 'pollingStationId']
+      include: [{ model: PollingStation, attributes: ['id', 'name', 'area', 'ward'] }]
     });
     // Demo fallback for elector ID 3
     if (!elector && req.params.id === '3') {
       return res.json({
-        id: 3,
-        serialNumber: 1003,
+        serialNumber: 3,
         name: 'Demo Voter',
         pollingStationId: 1,
         PollingStation: { id: 1, name: 'Demo Station', area: 'Demo Area', ward: 'W-DS1' }
@@ -58,16 +56,13 @@ router.get('/vote-status/:id', authenticateJWT, authorizeRoles('elector', 'admin
     if (req.params.id === '3') {
       return res.json({ hasVoted: false });
     }
-    // First find the elector to get their serial number
-    const elector = await Elector.findByPk(req.params.id, {
-      attributes: ['serialNumber']
-    });
+    // Find the elector by serial number (which is the primary key)
+    const elector = await Elector.findByPk(req.params.id);
     if (!elector) {
       return res.status(404).json({ message: 'Elector not found' });
     }
     const vote = await Vote.findOne({ 
-      where: { electorSerialNumber: elector.serialNumber },
-      attributes: ['id']
+      where: { electorSerialNumber: elector.serialNumber }
     });
     res.json({ hasVoted: !!vote });
   } catch (error) {

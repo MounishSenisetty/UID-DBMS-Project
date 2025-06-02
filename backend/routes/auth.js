@@ -15,10 +15,10 @@ router.post('/signup', async (req, res) => {
       return res.status(400).json({ message: 'Username already exists' });
     }
 
-    // ⚡ NO hashing. Directly store password
+    // NO hashing. Directly store password
     const user = await User.create({ username, password, role, email, linkedId });
 
-    const token = jwt.sign({ id: user.linkedId }, process.env.JWT_SECRET_KEY, {
+    const token = jwt.sign({ id: user.linkedId }, process.env.JWT_SECRET || 'MYSECRET', {
       expiresIn: "1h",
     });
 
@@ -44,7 +44,7 @@ router.post('/login', async (req, res) => {
       if (id === 1) role = 'admin';
       else if (id === 2) role = 'polling_officer';
       const demoUser = { id, username: role, role, linkedId: id };
-      const token = jwt.sign({ id: demoUser.linkedId, username: demoUser.username, role: demoUser.role }, process.env.JWT_SECRET || 'your_jwt_secret', { expiresIn: '1h' });
+      const token = jwt.sign({ id: demoUser.linkedId, username: demoUser.username, role: demoUser.role }, process.env.JWT_SECRET || 'MYSECRET', { expiresIn: '1h' });
       return res.json({ token, user: demoUser });
     }
 
@@ -63,7 +63,7 @@ router.post('/login', async (req, res) => {
 
     const token = jwt.sign(
       { id: user.linkedId, username: user.username, role: user.role },
-      process.env.JWT_SECRET || 'your_jwt_secret',
+      process.env.JWT_SECRET || 'MYSECRET',
       { expiresIn: '1h' }
     );
 
@@ -87,7 +87,7 @@ router.get('/verify', async (req, res) => {
     if (!token) {
       return res.status(401).json({ message: 'Token missing' });
     }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'MYSECRET');
     const user = await User.findByPk(decoded.id);
     if (!user) {
       return res.status(401).json({ message: 'User not found' });
